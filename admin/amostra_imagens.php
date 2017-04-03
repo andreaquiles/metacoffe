@@ -100,7 +100,7 @@ if (FUNCOES::isAjax()) {
                     </div>
                     <div class="modal-body">
                         <form method="post" class="noAjax" action="picEdit/src/out.php" method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="amostras_id" value="<?= $dataGet['amostra_id'] ?>">
+                            <input type="hidden" name="amostra_id" value="<?= $dataGet['amostra_id'] ?>">
                             <div style="margin:2% auto 0 auto; display: table;">
                                 <div class="picedit_box">
                                     <!-- Placeholder for messaging -->
@@ -251,7 +251,7 @@ if (FUNCOES::isAjax()) {
             <div class="well" style="">
                 <div class="row">
                     <?php
-                    $images = amostrasDAO::getListaImagens();
+                    $images = amostrasDAO::getListaImagens($dataGet['amostra_id']);
                     foreach ($images as $img) {
                         //$image_info = getimagesize('../upload/thumb/'.$img['foto']);
                         //$image_height = $image_info[1];

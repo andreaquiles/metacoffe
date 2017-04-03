@@ -19,7 +19,7 @@ try {
                 $imagem['foto'] = $name;
                 $imagem['mimetype'] = $mimitype;
                 $imagem['size'] = $size;
-                $imagem['amostra_id'] = $_GET['amostras_id'];
+                $imagem['amostra_id'] = $_POST['amostra_id'];
                 $imagem['usuario_id'] = $_SESSION['admin'];
                 amostrasBO::salvar($imagem, 'amostras_imagens');
                 echo '{"status":"1","link":"amostra_imagens.php"}';

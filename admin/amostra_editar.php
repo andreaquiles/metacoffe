@@ -3,6 +3,7 @@ require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "autoload.php";
 usuariosBO::checkExpireLogin();
 usuariosBO::checkLogin();
 
+
 $filterPost = array(
     'n_lote' => array(
         'filter' => FILTER_SANITIZE_STRING
@@ -56,6 +57,9 @@ $filterPost = array(
         'filter' => FILTER_SANITIZE_STRING
     ),
     '14_15_16' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
+     'tipo' => array(
         'filter' => FILTER_SANITIZE_STRING
     ),
     'observacao' => array(
@@ -252,9 +256,9 @@ if (FUNCOES::isAjax()) {
                 <li><a href="amostras"><?= AMOSTRAS ?> </a></li>
                 <li class="active"><?= 'Edição de amostra' ?> </li>
             </ol>
-<!--            <div class="form-group col-sm-12">
-                <h2>Cadastro de amostra</h2>
-            </div>-->
+            <!--            <div class="form-group col-sm-12">
+                            <h2>Cadastro de amostra</h2>
+                        </div>-->
             <div class="well">
 
                 <form role="form" method="post">
@@ -355,6 +359,18 @@ if (FUNCOES::isAjax()) {
                                     <label for="cnpj">14/15/16(%)</label>
                                     <input type="text" maxlength="5" class="form-control" name="14_15_16" placeholder="" value="<?php echo $data['14_15_16']; ?>" >
                                 </div>
+
+                                <div class="form-group col-sm-12">
+                                    <div class="radio pull-left" >
+                                        <label>
+                                            <input type="radio" value="arabica"  name="tipo" <?= $data['tipo']=='arabica' ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-default">Arábica</span>
+                                        </label>
+                                        <label style="margin-left:1.2em;">
+                                            <input type="radio" value="conilon"  name="tipo" <?= $data['tipo']=='conilon' ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-default">Conilon</span>
+                                        </label>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
@@ -383,7 +399,11 @@ if (FUNCOES::isAjax()) {
 
                         </div>
 
+
                         <div class="text-right">
+
+
+
 
                             <a href="<?php echo ''; ?>" class="btn btn-danger">Cancelar</a>
                             <button type="submit" class="btn btn-success">Salvar</button>

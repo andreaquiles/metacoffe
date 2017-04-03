@@ -33,10 +33,13 @@ $filterGETBusca = array(
     'busca' => array(
         'filter' => FILTER_DEFAULT,
     ),
-    'nome' => array(
+    'tipo' => array(
         'filter' => FILTER_DEFAULT,
     ),
-    'email' => array(
+    'bebida' => array(
+        'filter' => FILTER_DEFAULT,
+    ),
+    'regiao' => array(
         'filter' => FILTER_DEFAULT,
     )
 );
@@ -55,21 +58,22 @@ $argsPost = array(
     )
 );
 
+
 $inputPOST = filter_input_array(INPUT_POST, $argsPost);
 $dataGet = filter_input_array(INPUT_GET, $filterGET);
 $dataGetBusca = filter_input_array(INPUT_GET, $filterGETBusca);
-$arrayBusca = array('busca' => $dataGet['busca'], 'nome' => $dataGet['nome'], 'email' => $dataGet['email']);
-
+if (!$dataGet['page']) {
+    $dataGet['page'] = 1;
+}
 
 try {
-    if (!$dataGet['page']) {
-        $dataGet['page'] = 1;
-    }
+    $regioes = regiaoDAO::listaRegioes();
 
-    if (($dataGet['busca'])) {
-        $count = pessoasBO::getPesquisaPessoasCount($dataGet);
-        $paginador = new paginador($dataGet['page'], $count, 20, '', $arrayBusca);
-        $dados = pessoasBO::getPesquisaPessoas($dataGet, $paginador->getPage());
+    if (($dataGetBusca['bebida'] && $dataGetBusca['regiao'])){
+        $arrayBusca = array('tipo' => $dataGet['tipo'], 'bebida' => $dataGet['bebida'], 'regiao' => $dataGet['regiao'], 'page' => $dataGet['page']);
+        $count = amostrasDAO::getPesquisaAmostrasCount($dataGetBusca);
+        $paginador = new paginador($dataGetBusca['page'], $count, 20, '', $arrayBusca);
+        $dados = amostrasDAO::getPesquisaAmostras($dataGetBusca, $paginador->getPage());
     } else {
         $count = amostrasDAO::getListaAmostrasCount();
         $paginador = new paginador($dataGet['page'], $count, 20, '');
@@ -208,19 +212,43 @@ if (FUNCOES::isAjax()) {
                 </a>
                 <div class="form-group pull-right">
                     <form class="form-inline pull-right noAjax" method="get">
-                        <!--                        <div class="form-group">
-                                                    <select class="form-control" name="busca">
-                                                        <option value="nome"  <?php if ($dataGet['busca'] == "nome") echo "selected"; ?> >Nome</option>
-                                                        <option value="email" <?php if ($dataGet['busca'] == "email") echo "selected"; ?> >Email</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <input type="text" class="form-control" name="nome" style="width: 400px"  placeholder="" value="<?= $dataGet['nome'] ?>">
-                                                    <input type="text" class="form-control" name="email" style="width: 400px"  placeholder="" value="<?= $dataGet['email'] ?>">
-                                                </div>
-                                                <button type="submit" class="btn btn-success">
-                                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>  Pesquisar
-                                                </button>-->
+                        <input name="page" type="hidden"  value="<?= $dataGet['page']; ?>">
+                        
+                        <div class="form-group" style="">
+                            <div class="checkbox pull-left">
+                                <label>
+                                    <input type="radio" value="arabica"  name="tipo" <?php if ($dataGetBusca['tipo'] == "arabica") echo " checked"; ?> > Arábica
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="">
+                            <div class="checkbox pull-left">
+                                <label style="">
+                                    <input type="radio" value="conilon"  name="tipo" <?php if ($dataGetBusca['tipo'] == "conilon") echo " checked"; ?>> Conilon
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="bebida" style="width: 250px"  placeholder="Bebida" value="<?= $dataGetBusca['bebida'] ?>">
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" name="regiao">
+                                <option value="" selected="">Região</option>
+                                <?php
+                                if (is_array($regioes)) {
+                                    foreach ($regioes as $regiao) {
+                                        ?>
+                                        <option value="<?= $regiao->descricao ?>" <?php echo $dataGetBusca['regiao'] == $regiao->descricao ? ' selected' : ''; ?>><?= $regiao->descricao ?></option>
+                                        <?php
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>  Pesquisar
+                        </button>
                     </form>
                 </div>
             </ol>
@@ -291,35 +319,11 @@ if (FUNCOES::isAjax()) {
                 ?>
             </div>
         </div>
-
-
-
         <div id="footer" class="navbar-default">
             <div class="container">
             </div>
         </div>
         <script src="../assets/js/gerenciador.min.js"></script>
-        <script>
-            $('input[name=email]').hide();
-            $('select[name=busca]').change(function () {
-                if (this.value === 'email') {
-                    $('input[name=email]').show();
-                    $('input[name=nome]').hide();
-                    $('input[name=nome]').val("");
-                } else if (this.value === 'nome') {
-                    $('input[name=nome]').show();
-                    $('input[name=email]').hide();
-                    $('input[name=email]').val("");
-                } else {
-                    $('input[name=nome]').hide();
-                    $('input[name=nome]').val("");
-                    $('input[name=email]').hide();
-                    $('input[name=email]').val("");
-
-
-                }
-            });
-        </script>
-        <script src="assets/js/pessoas.js"></script>
+        <script src="assets/js/amostras.js"></script>
     </body>
 </html>
