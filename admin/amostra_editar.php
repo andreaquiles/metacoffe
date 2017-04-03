@@ -164,7 +164,7 @@ try {
                     $pessoa_id = amostrasBO::salvar($data, 'amostras');
                     $response['success'][] = 'Amostra inserida com sucesso!!';
                 }
-                //$response['link'] = 'javascript:history.go(-1)';
+                $response['link'] = 'javascript:history.go(-1)';
             }
         }
     }

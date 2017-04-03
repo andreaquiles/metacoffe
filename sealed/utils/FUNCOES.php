@@ -14,6 +14,23 @@ class FUNCOES {
         }
     }
 
+    public static function getExtension($string) {
+        $explode = explode(".", $string);
+        $extensao = $explode[count($explode) - 1];
+        return $extensao;
+    }
+
+    static function removerAcentosArquivos($str) {
+        $str = preg_replace('/[áàãâä]/ui', 'a', $str);
+        $str = preg_replace('/[éèêë]/ui', 'e', $str);
+        $str = preg_replace('/[íìîï]/ui', 'i', $str);
+        $str = preg_replace('/[óòõôö]/ui', 'o', $str);
+        $str = preg_replace('/[úùûü]/ui', 'u', $str);
+        $str = preg_replace('/[ç]/ui', 'c', $str);
+        $str = preg_replace('/\s+/ui', '_', $str);
+        return $str;
+    }
+
     static function random_pass($numchars = 6, $specialchars = false, $extrashuffle = false, $Onlynumbers = false) {
         $numchars = intval($numchars);
 
@@ -213,13 +230,41 @@ class FUNCOES {
         return $response;
     }
 
-    static function dynamicLinkFornecedores($session, $email, $hash) {
-        $dynamicLink = $_SERVER['HTTP_HOST'] . '/'
-                . 'fornecedores?'
-                . 'cid=' . $session
-                . '&efd=' . urlencode($email)
-                . '&hash=' . $hash;
-        return $dynamicLink;
+    static function get_file_extension($file_name) {
+        return substr(strrchr($file_name, '.'), 1);
+    }
+
+    static function make_thumb($src, $dest, $desired_width) {
+        /* read the source image */
+        $extension = self::get_file_extension($src);
+        if (in_array($extension, array('jpeg', 'jpg'))) {
+            $source_image = imagecreatefromjpeg($src);
+        } elseif ($extension == "png") {
+            $source_image = imagecreatefrompng($src);
+        } elseif ($extension == "gif") {
+            $source_image = imagecreatefromgif($src);
+        } elseif ($extension == "bmp") {
+            $source_image = imagecreatefromwbmp($src);
+        }
+        $width = imagesx($source_image);
+        $height = imagesy($source_image);
+        /* find the "desired height" of this thumbnail, relative to the desired width  */
+        $desired_height = floor($height * ($desired_width / $width));
+        //imagejpeg($source_image, $dest);//CRIA UM *.jpeg
+        /* create a new, "virtual" image */
+        if ($dest != NULL) {
+            if (!file_exists($dest)) {
+                $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
+                /* copy source image at a resized size */
+                imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
+                /* create the physical thumbnail image to its destination */
+                imagejpeg($virtual_image, $dest);
+                ////
+            }
+            return $desired_height;
+        } else {
+            return $desired_height;
+        }
     }
 
 }
