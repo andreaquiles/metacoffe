@@ -217,7 +217,7 @@ if (FUNCOES::isAjax()) {
                         <div class="form-group" style="">
                             <div class="checkbox pull-left">
                                 <label>
-                                    <input type="radio" value="arabica"  name="tipo" <?php if ($dataGetBusca['tipo'] == "arabica") echo " checked"; ?> > Arábica
+                                    <input type="radio" value="arabica"  name="tipo" <?php if ($dataGetBusca['tipo'] == "arabica" || empty($dataGetBusca['tipo'])) echo " checked"; ?> > Arábica
                                 </label>
                             </div>
                         </div>

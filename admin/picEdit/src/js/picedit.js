@@ -736,10 +736,10 @@
         },
         // form submitted
         _formsubmit: function () {
+            var _this = this;
             if (!window.FormData)
                 this.set_messagebox("Desculpe, o FormData API não é suportado!");
-            else {
-                var _this = this;
+            else if (_this._image) {
                 this.set_loading().delay(200).promise().done(function () {
                     _this._theformdata = new FormData(_this._theform[0]);
                     if (_this._image) {

@@ -1,6 +1,19 @@
 <?php
 
 require_once '../../../autoload.php';
+$filterPost = array(
+    'amostra_id' => array(
+         'filter' => FILTER_VALIDATE_INT
+    ),
+    'ordem' => array(
+        'filter' => FILTER_VALIDATE_INT
+    ),
+     'principal' => array(
+        'filter' => FILTER_VALIDATE_INT
+    )
+);
+$dataPost = filter_input_array(INPUT_POST, $filterPost);
+
 try {
     $desired_width = 125;
     foreach ($_FILES as $file) {
@@ -19,9 +32,14 @@ try {
                 $imagem['foto'] = $name;
                 $imagem['mimetype'] = $mimitype;
                 $imagem['size'] = $size;
-                $imagem['amostra_id'] = $_POST['amostra_id'];
+                $imagem['amostra_id'] = $dataPost['amostra_id'];
+                $imagem['ordem'] = $dataPost['ordem'];
+                $imagem['principal'] = $dataPost['principal'];
                 $imagem['usuario_id'] = $_SESSION['admin'];
-                amostrasBO::salvar($imagem, 'amostras_imagens');
+                $amostra_imagem_id = amostrasBO::salvar($imagem, 'amostras_imagens');
+                if (!empty($dataPost['principal'])){
+                    amostrasDAO::updateImagens($amostra_imagem_id);
+                }
                 echo '{"status":"1","link":"amostra_imagens.php"}';
             }
         } else {

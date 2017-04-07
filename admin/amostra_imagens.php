@@ -217,6 +217,15 @@ if (FUNCOES::isAjax()) {
                                             </div>
                                         </div>
                                     </div>
+
+                                </div>
+                                <div class="text-left" >
+                                    <div class="form-group col-sm-2" style="padding-left: 0px;width:120px">
+                                          <label>
+                                                <input type="checkbox" value="1"  name="principal"> <span style="font-size: 12px;" class="label label-default"> Principal</span>
+                                            </label>
+<!--                                        <input type="text" name="ordem" maxlength="2" class="form-control" value="">-->
+                                    </div>
                                 </div>
                                 <!-- end_picedit_box -->
                                 <div class="text-right">
@@ -240,11 +249,11 @@ if (FUNCOES::isAjax()) {
             </ol>
             <ol class="breadcrumb">
                 <li><div class="">
-<!--                        <span class="label label-primary">Lote: <b><?= $data['n_lote']?></b></span>-->
+<!--                        <span class="label label-primary">Lote: <b><?= $data['n_lote'] ?></b></span>-->
                         <span class="file-input btn btn-primary btn-file btn-sm" href="#myModal" data-toggle="modal" id="btnProdutos">
                             <span class="glyphicon glyphicon-import" ></span> <b>Carregar imagem</b> 
                         </span>
-                        
+
                     </div>
                 </li>
             </ol>
@@ -257,9 +266,9 @@ if (FUNCOES::isAjax()) {
                         //$image_height = $image_info[1];
                         echo "<div class=\"photo\">";
                         echo "<img src=\"../upload/{$img['foto']}\"  alt=\"\" height=\"100\" width=\"125\"><br>\n";
-                        echo "<a  class=\"lightbox\" href=\"../upload/{$img['foto']}\">", basename('../upload/' . $img['foto']), "</a><br>\n";
+                        echo "<a  class=\"lightbox\" href=\"../upload/{$img['foto']}\">", basename('../upload/' . $img['foto']), "</a>\n";
                         echo '<br>' . $img['size'] . '<br>';
-                        echo $img['mimetype'];
+                        echo $img['mimetype'] . "<br>";
                         echo '<a class="btn btn-danger btn-xs AjaxConfirm" style="float:right" data-toggle="tooltip" title="Excluir" 
                          href="' . $_SERVER['SELF'] . '?action=excluir&amostra_imagem_id=' . $img['amostra_imagem_id']
                         . '&foto=' . $img['foto'] . '&amostra_id=' . $dataGet['amostra_id'] . '">
@@ -272,11 +281,12 @@ if (FUNCOES::isAjax()) {
             </div>
         </div>
         <div id="footer" class="navbar-default">
-            
+
         </div>
         <script src="assets/js/gerenciador.min.js"></script>
         <script type="text/javascript" src="picEdit/src/js/picedit.js"></script>
         <script type="text/javascript">
+            NumeroInteiros('ordem');
             $(function () {
                 $('.picedit_box').picEdit({
                     imageUpdated: function (img) {
