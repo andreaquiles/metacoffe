@@ -140,10 +140,11 @@ class amostrasDAO {
 
     public static function getListaImagens($amostra_id) {
         try {
-            $sql = " SELECT * "
-                    . " FROM amostras_imagens "
-                    . " WHERE usuario_id=" . $_SESSION['admin']
-                    . " AND amostra_id=" . $amostra_id;
+            $sql = " SELECT ai.*, a.n_lote "
+                    . " FROM amostras_imagens ai INNER JOIN amostras a "
+                    . " WHERE ai.usuario_id=" . $_SESSION['admin']
+                    . " AND ai.amostra_id=" . $amostra_id
+                    . " ORDER BY ai.principal DESC ";
             $db = new DB();
             $sqlmy = $db->query($sql);
             $dados = $db->GetData($sqlmy, true);
@@ -173,8 +174,9 @@ class amostrasDAO {
         try {
             $sql = " SELECT * FROM"
                     . " (SELECT a.amostra_id,a.n_lote,a.regiao,ai.foto,ai.principal "
-                    . "   FROM amostras a INNER JOIN amostras_imagens ai ON a.amostra_id = a.amostra_id "
-                    . "    WHERE a.usuario_id = 1 AND ai.principal IS NOT NULL"
+                    . "   FROM amostras a LEFT JOIN amostras_imagens ai ON a.amostra_id = a.amostra_id "
+                    . "    WHERE a.usuario_id = 1 "
+                    . "    AND ai.principal IS NOT NULL"
                     . "  ) amostragem "
                     . " GROUP BY amostra_id";
             $db = new DB();

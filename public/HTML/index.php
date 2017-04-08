@@ -1,7 +1,21 @@
 <?php
 require_once '../../autoload.php';
+$filterGET = array(
+    'action' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^(excluir|imprimir|not_vendedor|vendedor)$/")
+    ),
+    'page' => array(
+        'filter' => FILTER_VALIDATE_INT
+    )
+);
+$dataGet = filter_input_array(INPUT_GET, $filterGET);
+if (!$dataGet['page']) {
+    $dataGet['page'] = 1;
+}
 try {
-    $dados = amostrasDAO::getListaAmostrasHtml(1000);
+    $paginador = new paginadorHTML($dataGet['page'], 1, 9, '');
+    $dados = amostrasDAO::getListaAmostrasHtml($paginador->getPage());
 } catch (Exception $err) {
     $response['error'][] = $err->getMessage();
 }
@@ -25,6 +39,7 @@ try {
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color4.css" title="color4" media="all" />
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color5.css" title="color5" media="all" />
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color6.css" title="color6" media="all" />
+
 
         <!--[if lt IE 9]>
         <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -339,46 +354,47 @@ try {
                         <div class="row m-border">
                             <?php
                             if (is_array($dados)) {
-                                foreach($dados as $dado){ 
-                            }
-                            ?>
-                            <div class="col-lg-4 col-md-6 col-xs-12 wow zoomInUp" data-wow-delay="0.5s">
-                                <div class="b-items__cell">
-                                    <div class="b-items__cars-one-img">
-                                        <img class='img-responsive' src="../../upload/<?= $dado['foto']?>" alt='chevrolet'/>
-                                        <a href="#" data-toggle="modal" data-target="#myModal" class="b-items__cars-one-img-video"><span class="fa fa-film"></span>VIDEO</a>
-                                        <span class="b-items__cars-one-img-type m-premium">PREMIUM</span>
-                                        <form action="/" method="post">
-<!--                                            <input type="checkbox" name="check1" id='check1'/>-->
-<!--                                            <label for="check1" class="b-items__cars-one-img-check"><span class="fa fa-check"></span></label>-->
-                                        </form>
-                                    </div>
-                                    <div class="b-items__cell-info">
-                                        <div class="s-lineDownLeft b-items__cell-info-title">
-                                            <h2 class=""><a href="detail.html">Lote <?= $dado['n_lote']?></a></h2>
+                                foreach ($dados as $dado) {
+                                    
+                                }
+                                ?>
+                                <div class="col-lg-4 col-md-6 col-xs-12 wow zoomInUp" data-wow-delay="0.5s">
+                                    <div class="b-items__cell">
+                                        <div class="b-items__cars-one-img">
+                                            <img class='img-responsive' src="../../upload/<?= $dado['foto'] ?>" alt='chevrolet'/>
+                                            <a href="#" data-toggle="modal" data-target="#myModal" class="b-items__cars-one-img-video"><span class="fa fa-film"></span>VIDEO</a>
+                                            <span class="b-items__cars-one-img-type m-premium">PREMIUM</span>
+                                            <form action="/" method="post">
+    <!--                                            <input type="checkbox" name="check1" id='check1'/>-->
+    <!--                                            <label for="check1" class="b-items__cars-one-img-check"><span class="fa fa-check"></span></label>-->
+                                            </form>
                                         </div>
-                                        <p>Lorem ipsum dolor sit amet consec let radipisicing elit, sed do eiusmod  ...</p>
-                                        <div>
-                                            <div class="row m-smallPadding">
-                                                <div class="col-xs-5">
-                                                    <span class="b-items__cars-one-info-title">Body Style:</span>
-                                                    <span class="b-items__cars-one-info-title">Mileage:</span>
-                                                    <span class="b-items__cars-one-info-title">Transmission:</span>
-                                                    <span class="b-items__cars-one-info-title">Specs:</span>
-                                                </div>
-                                                <div class="col-xs-7">
-                                                    <span class="b-items__cars-one-info-value">Sedan</span>
-                                                    <span class="b-items__cars-one-info-value">35,000 KM</span>
-                                                    <span class="b-items__cars-one-info-value">6-Speed Auto</span>
-                                                    <span class="b-items__cars-one-info-value">2-Passenger, 2-Door</span>
+                                        <div class="b-items__cell-info">
+                                            <div class="s-lineDownLeft b-items__cell-info-title">
+                                                <h2 class=""><a href="detail.php?amostra_id=<?= $dado['amostra_id'] ?>">Lote <?= $dado['n_lote'] ?></a></h2>
+                                            </div>
+                                            <p>Lorem ipsum dolor sit amet consec let radipisicing elit, sed do eiusmod  ...</p>
+                                            <div>
+                                                <div class="row m-smallPadding">
+                                                    <div class="col-xs-5">
+                                                        <span class="b-items__cars-one-info-title">Body Style:</span>
+                                                        <span class="b-items__cars-one-info-title">Mileage:</span>
+                                                        <span class="b-items__cars-one-info-title">Transmission:</span>
+                                                        <span class="b-items__cars-one-info-title">Specs:</span>
+                                                    </div>
+                                                    <div class="col-xs-7">
+                                                        <span class="b-items__cars-one-info-value">Sedan</span>
+                                                        <span class="b-items__cars-one-info-value">35,000 KM</span>
+                                                        <span class="b-items__cars-one-info-value">6-Speed Auto</span>
+                                                        <span class="b-items__cars-one-info-value">2-Passenger, 2-Door</span>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <h5 class="b-items__cell-info-price"><span>Price:</span>$29,415</h5>
                                         </div>
-                                        <h5 class="b-items__cell-info-price"><span>Price:</span>$29,415</h5>
                                     </div>
                                 </div>
-                            </div>
-                            <?php
+                                <?php
                             }
                             ?>
                             <div class="col-lg-4 col-md-6 col-xs-12 wow zoomInUp" data-wow-delay="0.5s">
@@ -668,15 +684,20 @@ try {
                                 </div>
                             </div>
                         </div>
-                        <div class="b-items__pagination">
-                            <div class="b-items__pagination-main wow zoomInUp" data-wow-delay="0.5s">
-                                <a data-toggle="modal" data-target="#myModal" href="#" class="m-left"><span class="fa fa-angle-left"></span></a>
-                                <span class="m-active"><a href="#">1</a></span>
-                                <span><a href="#">2</a></span>
-                                <span><a href="#">3</a></span>
-                                <span><a href="#">4</a></span>
-                                <a href="#" class="m-right"><span class="fa fa-angle-right"></span></a>    
-                            </div>
+                        <!--                        <div class="b-items__pagination">
+                                                    <div class="b-items__pagination-main wow zoomInUp" data-wow-delay="0.5s">
+                                                        <a data-toggle="modal" data-target="#myModal" href="#" class="m-left"><span class="fa fa-angle-left"></span></a>
+                                                        <span class="m-active"><a href="#">1</a></span>
+                                                        <span><a href="#">2</a></span>
+                                                        <span><a href="#">3</a></span>
+                                                        <span><a href="#">4</a></span>
+                                                        <a href="#" class="m-right"><span class="fa fa-angle-right"></span></a>    
+                                                    </div>
+                                                </div>-->
+                        <div class="b-items__pagination" id="paginador_clientes">
+                            <?php
+                            echo $paginador->getPagi();
+                            ?>
                         </div>
                     </div>
                 </div>
