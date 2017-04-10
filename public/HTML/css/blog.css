@@ -45,7 +45,7 @@
     outline: none;
 }
 
-.b-blog__aside-search input[type='text']{
+.b-blog__aside-search input[type='text'],input[type='password']{
     display: block;
     width: 100%;
     padding: 12px 20px;

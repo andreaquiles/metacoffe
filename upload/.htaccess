@@ -1,1 +1,4 @@
 Options -Indexes
+RewriteEngine On
+RewriteCond %{HTTP_REFERER} !^http://(.+.)?localhost:88/metacoffe/ [NC]
+RewriteRule .*.(jpg|jpe?g|png|gif|zip|rar)$ http://localhost:88/metacoffe/assets/imagens/HOTLINKER.png  [L]

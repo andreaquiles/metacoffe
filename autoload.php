@@ -1,6 +1,13 @@
 <?php
 
-include realpath(dirname(__FILE__)) . '/sealed/init.php';
+include realpath(__DIR__) . '/sealed/init.php';
+$filterGET = array(
+    'lang' => array(
+        'filter' => FILTER_VALIDATE_INT
+    )
+);
+
+$tl = parse_ini_file(realpath(__DIR__).'/assets/lang/pt_br.ini', true);
 
 function __autoload($class) {
     /**

@@ -8,10 +8,9 @@ $filterGET = array(
         'filter' => FILTER_VALIDATE_INT
     )
 );
-
 $dataGet = filter_input_array(INPUT_GET, $filterGET);
 try {
-    $dados = amostrasDAO::getListaImagens($dataGet['amostra_id']);
+    $dados = amostrasDAO::getListaImagensHTML($dataGet['amostra_id'], 1);
 } catch (Exception $err) {
     $response['error'][] = $err->getMessage();
 }
@@ -44,7 +43,6 @@ try {
 
     </head>
     <body class="m-detail" data-scrolling-animations="true" data-equal-height=".b-auto__main-item">
-
 
 
         <div id="alerta">
@@ -125,7 +123,7 @@ try {
                             <ul>
                                 <li><a href="#">Cart</a></li>
                                 <li><a href="#">Register</a></li>
-                                <li><a href="#">Sign in</a></li>
+                                <li><a href="login"><?= $tl['menu']['m1'] ?></a></li>
                             </ul>
                         </nav>
                     </div>
@@ -260,6 +258,7 @@ try {
                                 <div class="b-detail__main-info-images wow zoomInUp" data-wow-delay="0.5s">
                                     <div class="row m-smallPadding">
                                         <div class="col-xs-10">
+
                                             <ul class="b-detail__main-info-images-big bxslider enable-bx-slider" data-pager-custom="#bx-pager" data-mode="horizontal" data-pager-slide="true" data-mode-pager="vertical" data-pager-qty="5">
                                                 <?php
                                                 if (is_array($dados)) {
@@ -268,9 +267,9 @@ try {
                                                         <li class="s-relative">                                        
         <!--                                                    <a data-toggle="modal" data-target="#myModal" href="#" class="b-items__cars-one-img-video"><span class="fa fa-film"></span>VIDEO</a>-->
         <!--                                                            <img class="img-responsive center-block" src="../../upload/<?= $dado['foto'] ?>" alt="nissan" />-->
-                                                            <div class="easyzoom easyzoom--overlay is-ready">
-                                                                <a href="../../upload/<?= $dado['foto'] ?>" class="img-responsive center-block">
-                                                                    <img src="../../upload/<?= $dado['foto'] ?>" >
+                                                            <div class="easyzoom easyzoom--overlay">
+                                                                <a href="../../upload/<?= $dado['foto'] ?>"  >
+                                                                    <img src="../../upload/<?= $dado['foto'] ?>"  >
                                                                 </a>
                                                             </div>
                                                         </li>
@@ -279,6 +278,7 @@ try {
                                                 }
                                                 ?>
                                             </ul>
+
                                         </div>
                                         <div class="col-xs-2 pagerSlider pagerVertical">
                                             <div class="b-detail__main-info-images-small" id="bx-pager">

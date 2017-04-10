@@ -153,22 +153,22 @@ body{
 .s-form select{
     width:100%!important;
     margin-bottom: 10px;
-    text-transform: uppercase;
-    font: 400 10px 'Open Sans',sans-serif!important;
+/*    text-transform: uppercase;*/
+    font: 400 13px 'Open Sans',sans-serif!important;
 }
 
 .s-form select + span.fa-caret-down{
     right:25px!important;
 }
 
-.s-form input[type='text'],.s-form textarea{
+.s-form input[type='text'],.s-form textarea, .s-form password{
     display: block;
     width: 100%;
     margin-bottom: 15px;
-    padding: 15px 20px;
-    font: 400 10px 'Open Sans',sans-serif;
-    border: 1px solid #eeeeee;
-    text-transform: uppercase;
+    padding: 12px 20px;
+    font: 400 14px 'Open Sans',sans-serif;
+    border: 1px solid #ccc;
+/*    text-transform: uppercase;*/
     border-radius: 30px;
 }
 
@@ -283,7 +283,7 @@ body{
 }
 
 .s-submit button.btn.m-btn{
-    text-transform: uppercase;
+/*    text-transform: uppercase;*/
     margin-top: 35px;
 }
 
