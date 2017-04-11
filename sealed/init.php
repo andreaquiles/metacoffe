@@ -22,7 +22,7 @@ set_time_limit( 0 );
 
 define('HOME', "index");
 define('cotacao_view', "cotacao_view");
-define('TITLE', "Manager MetaCoffe");
+define('TITLE', "Manager MetaCoffee");
 define('PESSOAS', "Clientes");
 define('AMOSTRAS', "Amostras");
 define('AMOSTRAS_IMAGENS', "Amostras Imagens");

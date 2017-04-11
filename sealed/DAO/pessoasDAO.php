@@ -137,7 +137,7 @@ class pessoasDAO {
         try {
             $SQL = "SELECT cpf,cnpj FROM pessoas_informacao  "
                     . " WHERE (cpf = ? OR cnpj= ?) "
-                    . " AND usuario_id=" . $_SESSION['admin'];
+                    . " AND usuario_id=1";
             $db = new DB();
             return $db->executeReturnFetch($SQL, array($cpf_cnpj, $cpf_cnpj));
         } catch (Exception $err) {
@@ -160,9 +160,9 @@ class pessoasDAO {
 
     public static function checkLogin($login) {
         try {
-            $SQL = "SELECT * FROM pessoas "
+            $SQL = "SELECT pessoa_id FROM pessoas "
                     . " WHERE login = ? "
-                    . " AND usuario_id=" . $_SESSION['admin'];
+                    . " AND usuario_id=1";
             $db = new DB();
             return $db->executeReturnFetch($SQL, array($login));
         } catch (Exception $err) {
@@ -175,7 +175,7 @@ class pessoasDAO {
             $SQL = "SELECT * FROM pessoas "
                     . " WHERE login = ? "
                     . " AND pessoa_id <> ?"
-                    . " AND usuario_id=" . $_SESSION['admin'];
+                    . " AND usuario_id=1";
             $db = new DB();
             return $db->executeReturnFetch($SQL, array($login, $pessoa_id));
         } catch (Exception $err) {

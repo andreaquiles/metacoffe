@@ -14,8 +14,10 @@ try {
 
         if (empty($dataPost['email'])) {
             $response['error'][] = 'E-mail Inválido!';
+             $response['error_input'][] = 'email';
         } elseif (empty($dataPost['senha'])) {
             $response['error'][] = 'Preencha senha corretamente!';
+            $response['error_input'][] = 'senha';
         } else {
             $response['success'][] = "aguarde...";
         }
@@ -105,7 +107,7 @@ if (FUNCOES::isAjax()) {
                         <nav class="b-topBar__nav">
                             <ul>
                                 <li><a href="#">Cart</a></li>
-                                <li><a href="#">Register</a></li>
+                                <li><a href="cadastro"><?= $tl['menu']['m2'] ?></a></li>
                                 <li><a href="login"><?= $tl['menu']['m1'] ?></a></li>
 
                             </ul>

@@ -1,28 +1,275 @@
 <?php
 require_once '../../autoload.php';
-$filterGET = array(
+$filterPostUserInfo = array(
     'nome' => array(
-        'filter' => FILTER_SANITIZE_STRING
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,255}$/")
+    ),
+    'tpPessoa' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[F|J]$/")
+    ),
+    'cpf' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}$/")
+    ),
+    'rg' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[a-z0-9]{0,20}$/i")
+    ),
+    'data_nascimento' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^(0[1-9]|[1-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/[0-9]{4}$/")
+    ),
+    'cnpj' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[0-9]{2}.[0-9]{3}.[0-9]{3}\/[0-9]{4}-[0-9]{2}$/")
+    ),
+    'razao_social' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,255}$/")
+    ),
+    'inscricao_estadual' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^([0-9]{0,20}|ISENTO)$/")
+    ),
+    'inscricao_municipal' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^([0-9]{0,20}|ISENTO)$/")
+    ),
+    'data_fundacao' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^(0[1-9]|[1-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/[0-9]{4}$/")
+    //"/^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/"
     ),
     'email' => array(
-        'filter' => FILTER_VALIDATE_EMAIL
+        'filter' => FILTER_VALIDATE_EMAIL,
     ),
-    'password' => array(
-        'filter' => FILTER_SANITIZE_STRING
+    'observacao' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,1000}$/")
+    ),
+    'pessoa_id' => array(
+        'filter' => FILTER_VALIDATE_INT
+    ),
+    'page' => array(
+        'filter' => FILTER_VALIDATE_INT
     )
 );
-$dataPost = filter_input_array(INPUT_POST, $filterGET);
-try {
-    if ($dataPost) {
 
-        if (empty($dataPost['nome'])) {
-            $response['error'][] = 'Preencha nome corretamente!';
+$filterPostUser = array(
+    'pessoa_id' => array(
+        'filter' => FILTER_VALIDATE_INT
+    ),
+    'login' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,255}$/")
+    ),
+    'password' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,255}$/")
+    )
+);
+$filterPostEndereco = array(
+    'rua' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,1000}$/")
+    ),
+    'numero' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,20}$/")
+    ),
+    'complemento' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,500}$/")
+    ),
+    'bairro' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,500}$/")
+    ),
+    'cidade' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,500}$/")
+    ),
+    'bairro' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,500}$/")
+    ),
+    'cidade' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,500}$/")
+    ),
+    'estado' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,10}$/")
+    ),
+    'cep' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,10}$/")
+    ),
+    'telefone_fixo' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,20}$/")
+    ),
+    'telefone_celular' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[\w\W]{1,20}$/")
+    )
+);
+
+//$dataGET = filter_input_array(INPUT_GET, $filterGET);
+$data = filter_input_array(INPUT_POST, $filterPostUserInfo);
+$datauser = filter_input_array(INPUT_POST, $filterPostUser);
+$data_endereco = filter_input_array(INPUT_POST, $filterPostEndereco);
+//print_r($data);exit;
+try {
+    if ($data) {
+        $response = array();
+        if (empty($data['nome'])) {
+            $response['error'][] = 'Preencher nome';
             $response['error_input'][] = 'nome';
-        } elseif (empty($dataPost['password'])) {
+        } else if ($data['email'] == NULL) {
+            $response['error'][] = 'E-mail Inválido!';
+            $response['error_input'][] = 'email';
+        } else if ($datauser['login'] == NULL) {
+            $response['error'][] = 'Preencher login';
+            $response['error_input'][] = 'login';
+        } elseif (!empty(pessoasDAO::checkLogin($datauser['login']))) {
+            $response['error'][] = 'Login de Cliente já cadastrado !!!';
+            $response['error_input'][] = 'login';
+        } else if (empty($datauser['password'])) {
+            $response['error'][] = 'Preencher senha corretamente!';
             $response['error_input'][] = 'password';
-            $response['error'][] = 'Preencha senha corretamente!';
-        } else {
-            $response['success'][] = "aguarde...";
+        }
+        if ($data['tpPessoa'] == 'F' && empty($response['error'])) {
+            if ($data['cpf'] == NULL) {
+                $response['error'][] = 'Preencher CPF!';
+                $response['error_input'][] = 'cpf';
+            } else if (!empty(pessoasBO::getCpfCnpj($data['cpf']))) {
+                $response['error'][] = 'CPF já cadastrado !!!';
+                $response['error_input'][] = 'cpf';
+            } else if (empty($data['data_nascimento'])) {
+                $response['error'][] = 'Preencher Data Nascimento corretamente!';
+                $response['error_input'][] = 'data_nascimento';
+            }
+        } else if ($data['tpPessoa'] == 'J' && empty($response['error'])) {
+            if ($data['razao_social'] == NULL) {
+                $response['error'][] = 'Razão Social Inválida!';
+                $response['error_input'][] = 'razao_social';
+            } else if ($data['cnpj'] == NULL) {
+                $response['error'][] = 'CNPJ Inválido!';
+                $response['error_input'][] = 'cnpj';
+            } else if (!empty(pessoasBO::getCpfCnpj($data['cnpj']))) {
+                $response['error'][] = 'CNPJ já cadastrado !!!';
+                $response['error_input'][] = 'cnpj';
+            } else if ($data['data_fundacao'] == NULL) {
+                $response['error'][] = 'Data Fundacao Inválida!';
+                $response['error_input'][] = 'data_fundacao';
+            } 
+//            else if ($data['inscricao_estadual'] == NULL) {
+//                $response['error'][] = 'Inscrição Estadual Inválida!';
+//                $response['error_input'][] = 'inscricao_estadual';
+//            } else if ($data['inscricao_municipal'] == NULL) {
+//                $response['error'][] = 'Inscrição Municipal Inválida!';
+//                $response['error_input'][] = 'inscricao_municipal';
+//            }
+        }
+        if (empty($response['error'])) {
+            if (empty($data_endereco['rua'])) {
+                $response['error'][] = 'Preencher rua!';
+                $response['error_input'][] = 'rua';
+            }
+            else if (empty($data_endereco['numero'])) {
+                $response['error'][] = 'número!';
+                $response['error_input'][] = 'numero';
+            }else if (empty($data_endereco['bairro'])) {
+                $response['error'][] = 'bairro!';
+                $response['error_input'][] = 'bairro';
+            }else if (empty($data_endereco['cidade'])) {
+                $response['error'][] = 'cidade!';
+                $response['error_input'][] = 'cidade';
+            }else if (empty($data_endereco['estado'])) {
+                $response['error'][] = 'estado!';
+                $response['error_input'][] = 'estado';
+            }else if (empty($data_endereco['cep'])) {
+                $response['error'][] = 'cep!';
+                $response['error_input'][] = 'cep';
+            }else if (empty($data_endereco['telefone_celular'])) {
+                $response['error'][] = 'celular!';
+                $response['error_input'][] = 'telefone_celular';
+            }
+        }
+
+        if (empty($response['error'])) {
+            /**
+             * 
+             */
+            if (!$dataGet['page']) {
+                $page = 1;
+            } else {
+                $page = $data['page'];
+            }
+            unset($data['page']);
+            $datauser['password'] = FUNCOES::cryptografar($datauser['password']);
+            if ($data['tpPessoa'] == 'F') {
+                /**
+                 * ((((((((((((((((((PESSOA FISICA)))))))))))))))
+                 */
+                ($data['cnpj'] = NULL);
+                ($data['razao_social'] = NULL);
+                ($data['inscricao_estadual'] = NULL);
+                ($data['inscricao_municipal'] = NULL);
+                ($data['data_fundacao'] = NULL);
+                $data['data_nascimento'] = FUNCOES::formatarDatatoMYSQL($data['data_nascimento']);
+            } else {
+                /**
+                 * ((((((((((((((((((((PESSOA JURIDICA))))))))))))))))))
+                 */
+                ($data['cpf'] = NULL);
+                ($data['rg'] = NULL);
+                ($data['data_nascimento'] = NULL);
+                $data['data_fundacao'] = FUNCOES::formatarDatatoMYSQL($data['data_fundacao']);
+            }
+
+
+            if (empty($response['error'])) {
+                if ($datauser['pessoa_id']) {
+                    /**
+                     * (((((((((((((((((( atualizar usuario ))))))))))))))))))))))))))
+                     */
+//                    $pessoa_id = ($datauser['pessoa_id']);
+//                    $endereco = serialize($data_endereco);
+//                    $data['endereco'] = $endereco;
+//                    unset($data['pessoa_id']);
+//                    pessoasBO::salvar($datauser, 'pessoas', $pessoa_id);
+//                    /**
+//                     * 
+//                     */
+//                    if ($pessoa_id) {
+//                        pessoasBO::salvar($data, 'pessoas_informacao', $pessoa_id);
+//                    } else {
+//                        pessoasBO::salvar($data, 'pessoas_informacao');
+//                    }
+//
+//                    $response['success'][] = 'Cliente atualizado com sucesso!!';
+                } else {
+                    /**
+                     * (((((((((((((((((( inserir usuario  )))))))))))))))))))))))
+                     */
+                    $endereco = serialize($data_endereco);
+                    $data['endereco'] = $endereco;
+                    unset($data['pessoa_id']);
+                    unset($datauser['pessoa_id']);
+                    $datauser['comprar'] = 1;
+                    $datauser['usuario_id'] = $_SESSION['admin'];
+                    $pessoa_id = pessoasBO::salvar($datauser, 'pessoas');
+                    $data['pessoa_id'] = $pessoa_id;
+                    $data['usuario_id'] = $_SESSION['admin'];
+                    pessoasBO::salvar($data, 'pessoas_informacao');
+                    $response['success'][] = 'Cliente inserido com sucesso!!';
+                }
+                //$response['link'] = 'javascript:history.go(-1)';
+            }
         }
     }
 } catch (Exception $err) {
@@ -110,7 +357,7 @@ if (FUNCOES::isAjax()) {
                         <nav class="b-topBar__nav">
                             <ul>
                                 <li><a href="#">Cart</a></li>
-                                <li><a href="#">Register</a></li>
+                                <li><a href="cadastro"><?= $tl['menu']['m2'] ?></a></li>
                                 <li><a href="login"><?= $tl['menu']['m1'] ?></a></li>
 
                             </ul>
@@ -224,6 +471,7 @@ if (FUNCOES::isAjax()) {
                                     if (!empty($response['error'])) {
                                         ?>
                                         <div class="alert alert-danger fade in" role="alert">
+                                            
                                             <?php echo implode('<br>', $response['error']); ?>
                                         </div>
                                         <?php
@@ -238,6 +486,7 @@ if (FUNCOES::isAjax()) {
                                             <div class="form-group form-group-lg">
                                                 <label for="nome">Nome</label>
                                                 <input type="text" class="form-control input-lg" name="nome" placeholder="" value="<?php echo $data['nome']; ?>" maxlength="100" >
+
                                                 <input type="hidden"  name="pessoa_id" value="<?php echo $dataGet['pessoa_id']; ?>">
                                                 <input type="hidden"  name="pessoa_id" value="<?php echo $dataGet['pessoa_id']; ?>">
                                                 <input type="hidden" name="page" value="<?php echo $dataGet['page']; ?>">
@@ -269,11 +518,11 @@ if (FUNCOES::isAjax()) {
                                                 <div class="form-group col-sm-3">
                                                     <label for="tpPessoa">Pessoa Tipo</label>
                                                     <div class="s-relative">
-                                                    <select  name="tpPessoa" class="m-select">
-                                                        <option value="J" <?php echo $data['tpPessoa'] == 'J' ? 'selected' : ''; ?>>Jurídica</option>
-                                                        <option value="F" <?php echo $data['tpPessoa'] == 'F' || empty($data['tpPessoa']) ? 'selected' : ''; ?>>Física</option>
-                                                    </select>
-                                                    <span class="fa fa-caret-down"></span>
+                                                        <select  name="tpPessoa" class="m-select">
+                                                            <option value="J" <?php echo $data['tpPessoa'] == 'J' ? 'selected' : ''; ?>>Jurídica</option>
+                                                            <option value="F" <?php echo $data['tpPessoa'] == 'F' || empty($data['tpPessoa']) ? 'selected' : ''; ?>>Física</option>
+                                                        </select>
+                                                        <span class="fa fa-caret-down"></span>
                                                     </div>
                                                 </div>
                                                 <div class="pFisica">
@@ -314,7 +563,7 @@ if (FUNCOES::isAjax()) {
                                                         <div class="input-group">
                                                             <input type="text"  name="inscricao_estadual" class="form-control input-lg" value="<?php echo $data['inscricao_estadual']; ?>" <?php echo ($data['inscricao_estadual'] == 'ISENTO') ? 'readonly' : ''; ?>>
                                                             <div class="input-group-btn">
-                                                                <button type="button" style="margin-top:-11px;" class="btn btn-primary inscricao_estadual"><?php echo ($data['inscricao_estadual'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO '; ?></button>
+                                                                <button type="button" style="margin-top:-14px;height:46px;" class="btn btn-primary inscricao_estadual"><?php echo ($data['inscricao_estadual'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO '; ?></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -323,7 +572,7 @@ if (FUNCOES::isAjax()) {
                                                         <div class="input-group">
                                                             <input type="text"  name="inscricao_municipal" class="form-control input-lg" value="<?php echo $data['inscricao_municipal']; ?>" <?php echo ($data['inscricao_municipal'] == 'ISENTO') ? 'readonly' : ''; ?>>
                                                             <div class="input-group-btn">
-                                                                <button type="button" style="margin-top:-11px;" class="btn btn-primary inscricao_municipal"><?php echo ($data['inscricao_municipal'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO '; ?></button>
+                                                                <button type="button" style="margin-top:-14px;height:46px;" class="btn btn-primary inscricao_municipal"><?php echo ($data['inscricao_municipal'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO '; ?></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -399,7 +648,7 @@ if (FUNCOES::isAjax()) {
                                                     </h4>
                                                 </div>
 
-                                                <div id="observacao_cliente" class="collapse <?php echo (!empty($data['observacao'])) ? 'in' : ''; ?>">
+                                                <div id="observacao_cliente" class="collapse in">
                                                     <div class="panel-body">
                                                         <div class="form-group">
                                                             <label for="observacao">Observações</label>
@@ -412,9 +661,9 @@ if (FUNCOES::isAjax()) {
                                     </div>
                                     <div class="text-right">
 <!--                                    <button type="reset" class="btn m-btn">Cancelar<span class="fa fa-angle-right"></span></button>-->
-					<button type="submit" class="btn m-btn">Cadastrar<span class="fa fa-angle-right"></span></button>
+                                        <button type="submit" class="btn m-btn">Cadastrar<span class="fa fa-angle-right"></span></button>
                                     </div>
-                                  </form>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -589,14 +838,14 @@ if (FUNCOES::isAjax()) {
         </div>
     </footer><!--b-footer-->
     <!--Main-->  
-    <script src="../../assets/js/jquery.min.js"></script>
+<!--    <script src="../../assets/js/jquery.min.js"></script>-->
+    <script src="js/jquery-1.11.3.min.js"></script>
     <script src="../../assets/js/jquery.forms/jquery.forms.js"></script>
     <script src="../../assets/js/manager.js"></script>
     <script src="../../assets/js/jquery.maskedinput.min.js"></script>
     <script src="../../assets/js/typeahead.js"></script>
     <script src="../../assets/js/tipo_pessoa.min.js"></script>
 
-    <script src="js/jquery-1.11.3.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/modernizr.custom.js"></script>
@@ -623,14 +872,11 @@ if (FUNCOES::isAjax()) {
     <script src="js/jquery.placeholder.min.js"></script>
     <script src="js/theme.js"></script>
     <?php
-        if ($data['tpPessoa'] == 'J') {
-            echo '<script> $(\'.pFisica\').hide();$(\'.pJuridica\').show();</script>';
-        } else {
-            echo '<script> $(\'.pJuridica\').hide(); $(\'.pFisica\').show();</script>';
-        }
-//         $('input[name="produtos[' + index + '][preco]"]').css('border-color', function () {
-//                    return '#f00';//*vermelho
-//                });
-        ?>
+    if ($data['tpPessoa'] == 'J') {
+        echo '<script> $(\'.pFisica\').hide();$(\'.pJuridica\').show();</script>';
+    } else {
+        echo '<script> $(\'.pJuridica\').hide(); $(\'.pFisica\').show();</script>';
+    }
+    ?>
 </body>
 </html>

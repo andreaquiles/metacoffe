@@ -15,30 +15,40 @@
 
 $(document).ready(function () { //pronto para executar o js
     //CAPAZ DE EXECUTAR O JS
+
+
     $('form:not(.noAjax)').submit(function (e) {
         e.preventDefault();
         var form = $(this);
         //form.find('[type=submit]').attr('data-loading-text', 'Aguarde...').button('loading');
         $.post(form.attr('action'), form.serialize(), function (data) {
+            $('input').css('border-color', function () {
+                return '#ccc';//*cinza
+            });
+            $('div .alerta_input').remove();
             if (data.success) {
-                if (data.link) {
-                    location.href = data.link;
-                }
-                $('#alerta').html('<div class="alert alert-success \n\ fade in" role="alert">'
-                        + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
-                        + data.success + '</div>');
+                messagesModal(data);
+//                if (data.link) {
+//                    location.href = data.link;
+//                }
+//                $('#alerta').html('<div class="alert alert-success \n\ fade in" role="alert">'
+//                        + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+//                        + data.success + '</div>');
 
             } else if (data.error) {
-                $('input').css('border-color', function () {
-                    return '#ccc';//*cinza
-                });
-                $('#alerta').html('<div class="alert alert-danger" role="alert">'
-                        + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
-                        + data.error + '</div>');
+//                $('#alerta').html('<div class="alert alert-danger" role="alert"> '
+//                        + '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> '
+//                        + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+//                        + data.error + '</div>');
                 if (data.error_input) {
                     $('input[name="' + data.error_input + '"').css('border-color', function () {
-                        return '#f00';//*vermelho
+                        return '#f00';//*danger
                     });
+                    $('input[name="' + data.error_input + '"').after('<div class="alert alert-danger alerta_input" style="padding:5px" role="alert">'
+                            + '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> '
+                            + '<span class="sr-only">Error:</span>'
+                            + data.error
+                            + '</div>');
                     $('input[name="' + data.error_input + '"').focus();
                 }
             } else if (data.success2) {
@@ -56,6 +66,79 @@ $(document).ready(function () { //pronto para executar o js
             alert('Tente mais tarde.');
         });
     });
+
+
+    messagesModal = function (data) {
+        if (!$.isEmptyObject(data)) {
+            if (data.error) {
+                $('<div class="modal" aria-hidden="true">'
+                        + '<div class="modal-dialog">'
+                        + '<div class="modal-content panel-danger">'
+                        + '<div class="modal-header panel-heading">'
+                        + '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                        + '<h4 class="modal-title" id="exampleModalLabel">&nbsp;Alerta</h4>'
+                        + '</div>'
+                        + '<div class="modal-body">'
+                        + ($.isEmptyObject(data.error) ? data.error.join('<br>') : data.error)
+                        + '</div>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>')
+                        .on('shown.bs.modal', function () {
+                            var _modal = $(this);
+                            _modal.find("button:first").focus();
+                            setTimeout(function () {
+                                _modal.modal('hide');
+                            }, 3000);
+                        })
+                        .on('hidden.bs.modal', function () {
+                            $(this).remove();
+                            if (data.link) {
+                                location.href = data.link;
+                            }
+                            if (data.reload === true) {
+                                location.reload();
+                            }
+                        })
+                        .modal('show');
+            } else if (data.success) {
+                $('<div class="modal fade" aria-hidden="true">'
+                        + '<div class="modal-dialog">'
+                        + '<div class="modal-content panel-success">'
+                        + '<div class="modal-header panel-heading">'
+                        + '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                        + '<h4 class="modal-title" id="exampleModalLabel">&nbsp;Alerta</h4>'
+                        + '</div>'
+                        + '<div class="modal-body">'
+                        + ($.isEmptyObject(data.success) ? data.success.join('<br>') : data.success)
+                        + '</div>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>')
+                        .on('shown.bs.modal', function () {
+                            var _modal = $(this);
+                            _modal.find("button:first").focus();
+                            setTimeout(function () {
+                                _modal.modal('hide');
+                            }, 3000);
+                        })
+                        .on('hidden.bs.modal', function (e) {
+                            $(this).remove();
+                            if (data.link) {
+                                location.href = data.link;
+                            }
+                            if (data.reload === true) {
+                                location.reload();
+                            }
+                        })
+                        .modal('show');
+            } else if (data.link) {
+                location.href = data.link;
+            } else if (data.reload === true) {
+                location.reload();
+            }
+        }
+    };
 
 });
 

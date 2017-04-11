@@ -142,8 +142,8 @@ class amostrasDAO {
         try {
             $sql = " SELECT ai.*, a.n_lote "
                     . " FROM amostras_imagens ai INNER JOIN amostras a "
-                    . " WHERE ai.usuario_id=" . $_SESSION['admin']
-                    . " WHERE ai.amostra_id=" . $amostra_id
+                    . " WHERE ai.usuario_id = 1"
+                    . " AND ai.amostra_id=" . $amostra_id
                     . " ORDER BY ai.principal DESC ";
             $db = new DB();
             $sqlmy = $db->query($sql);
@@ -153,8 +153,8 @@ class amostrasDAO {
             throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
         }
     }
-    
-    public static function getListaImagensHTML($amostra_id,$usuario_id) {
+
+    public static function getListaImagensHTML($amostra_id, $usuario_id) {
         try {
             $sql = " SELECT ai.*, a.n_lote "
                     . " FROM amostras_imagens ai INNER JOIN amostras a "

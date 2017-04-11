@@ -534,20 +534,11 @@ if (FUNCOES::isAjax()) {
                                 <div class="panel panel-default">
                                     <div class="panel-heading" role="tab" id="headingOne2">
                                         <h4 class="panel-title">
-                                            <a data-toggle="collapse" href="#campos_endereco"><span class="glyphicon glyphicon-circle-arrow-down"></span> Endereço</a> <small>(Opcional)</small>
+                                            <a data-toggle="collapse" href="#campos_endereco"><span class="glyphicon glyphicon-circle-arrow-down"></span> Endereço</a>
                                         </h4>
                                     </div>
 
-                                    <div id="campos_endereco" class="collapse 
-                                    <?php
-                                    echo $endereco['rua'] ||
-                                    $endereco['numero'] ||
-                                    $endereco['bairro'] ||
-                                    $endereco['cidade'] ||
-                                    $endereco['estado'] ||
-                                    $endereco['cep'] ? 'in' : ''
-                                    ?>"
-                                         aria-labelledby="headingOne">
+                                    <div id="campos_endereco" class="collapse in"  aria-labelledby="headingOne">
 
                                         <div class="panel-body">
                                             <div class="form-group col-sm-5">

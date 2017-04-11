@@ -418,6 +418,7 @@ if (FUNCOES::isAjax()) {
             </div>
         </div>
 
+        <script src="assets/js/amostras_editar.min_dev.js"></script>
         <script src="assets/js/gerenciador.min.js"></script>
         <script>
 

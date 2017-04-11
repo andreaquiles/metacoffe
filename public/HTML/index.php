@@ -127,7 +127,7 @@ try {
                             <ul>
                                 <li><a href="#">Cart</a></li>
                                 <li><a href="#">Register</a></li>
-                                <li><a href="#">Sign in</a></li>
+                                <li><a href="login"><?= $tl['menu']['m1'] ?></a></li>
                             </ul>
                         </nav>
                     </div>
