@@ -42,7 +42,7 @@ $(document).ready(function () { //pronto para executar o js
 //                        + data.error + '</div>');
                 if (data.error_input) {
                     $('input[name="' + data.error_input + '"').css('border-color', function () {
-                        return '#f00';//*danger
+                        return '#a94442';//*danger
                     });
                     $('input[name="' + data.error_input + '"').after('<div class="alert alert-danger alerta_input" style="padding:5px" role="alert">'
                             + '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> '

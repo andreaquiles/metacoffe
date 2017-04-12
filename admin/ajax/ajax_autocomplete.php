@@ -94,7 +94,7 @@ switch ($action) {
         
         case 'bebida' :
         try {
-            $dados = amostrasDAO::ajax_autocomplete($action,$request);
+            $dados = amostrasBO::ajax_autocomplete($action,$request);
             if ($dados) {
                 foreach ($dados as $campo) {
                     //$id = $campo->pessoa_id;

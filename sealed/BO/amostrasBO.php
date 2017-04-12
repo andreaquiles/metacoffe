@@ -18,8 +18,6 @@ class amostrasBO {
         return $this->$campo;
     }
 
-    
-
     public static function salvar($data, $table, $dbk = NULL) {
         try {
             return amostrasDAO::salvar($data, $table, $dbk);
@@ -28,5 +26,15 @@ class amostrasBO {
         }
     }
 
-    
+    public static function ajax_autocomplete($action, $request, $user_id = NULL) {
+        try {
+            if (empty($user_id)){
+                $user_id = $_SESSION['admin'];
+            }
+            return amostrasDAO::ajax_autocomplete($action, $request, $user_id);
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
+        }
+    }
+
 }

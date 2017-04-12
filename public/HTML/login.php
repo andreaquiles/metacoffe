@@ -14,7 +14,7 @@ try {
 
         if (empty($dataPost['email'])) {
             $response['error'][] = 'E-mail Inválido!';
-             $response['error_input'][] = 'email';
+            $response['error_input'][] = 'email';
         } elseif (empty($dataPost['senha'])) {
             $response['error'][] = 'Preencha senha corretamente!';
             $response['error_input'][] = 'senha';
@@ -230,12 +230,14 @@ if (FUNCOES::isAjax()) {
                             </div>
                             <div class="b-contacts__address-hours-main wow zoomInUp" style="background-color: #F5F5F5" data-wow-delay="0.5s">
                                 <form id="contactForm" method="post"  novalidate class="s-form wow zoomInUp" data-wow-delay="0.3s">
-                                    <input type="text" placeholder="Email" value="" name="email" id="user-email" />
-                                    <input type="password" placeholder="Senha" value="" name="senha" id="user-senha" />
+                                    
+                                    <input type="text" placeholder="Email" class="form-control input-lg" value="" name="email" id="user-email" />
+                                    <input type="password" placeholder="Senha" class="form-control input-lg" value="" name="senha" id="user-senha" />
                                     <button type="submit" class="btn m-btn">Entrar<span class="fa fa-angle-right"></span></button>
 
                                 </form>
                             </div>
+
                         </div>
                     </div>
                     <div class="col-xs-6">
@@ -245,7 +247,7 @@ if (FUNCOES::isAjax()) {
                                 <div class="b-contacts__address-hours-main wow zoomInUp" data-wow-delay="0.5s">
                                     <div class="row">
                                         <div class="col-md-6 col-xs-12">
-                                            <a href="cadastro" class="btn m-btn m-infoBtn">Cadastrar<span class="fa fa-angle-right"></span></a>
+                                            <a href="cadastro" class="btn m-btn">Cadastrar<span class="fa fa-angle-right"></span></a>
                                         </div>
                                         <div class="col-md-6 col-xs-12">
                                             <h5>Service Department</h5>

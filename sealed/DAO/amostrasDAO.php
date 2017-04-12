@@ -79,10 +79,22 @@ class amostrasDAO {
 
     static function getListaAmostrasCount() {
         try {
-
             $SQL = " SELECT amostra_id "
                     . " FROM amostras "
-                    . " WHERE usuario_id=" . $_SESSION['admin'];
+                    . " WHERE usuario_id= ".$_SESSION['admin'];
+            $db = new DB();
+            $count = $db->RowCount($SQL);
+            return $count;
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
+    
+    static function getListaAmostrasHTMLCount($user_id) {
+        try {
+            $SQL = " SELECT amostra_id "
+                    . " FROM amostras "
+                    . " WHERE usuario_id= ".$user_id;
             $db = new DB();
             $count = $db->RowCount($SQL);
             return $count;
@@ -113,7 +125,7 @@ class amostrasDAO {
                     . " WHERE tipo ='" . $dataGet['tipo'] . "'"
                     . " AND bebida = '" . $dataGet['bebida'] . "'"
                     . " AND regiao= '" . $dataGet['regiao'] . "'"
-                    . " AND usuario_id=" . $_SESSION['admin'];
+                    . " AND usuario_id=".$_SESSION['admin'];
             $db = new DB();
             $count = $db->RowCount($SQL);
             return $count;
@@ -129,7 +141,8 @@ class amostrasDAO {
                     . " WHERE tipo ='" . $dataGet['tipo'] . "'"
                     . " AND bebida = '" . $dataGet['bebida'] . "'"
                     . " AND regiao= '" . $dataGet['regiao'] . "'"
-                    . " AND usuario_id=" . $_SESSION['admin'];
+                    . " AND usuario_id=" . $_SESSION['admin']
+                    . " LIMIT $limit";
             $db = new DB();
             return $db->GetData($db->query($SQL), true);
             // return $db->executeReturnFetch($SQL, array($dataGet['tipo'], $dataGet['bebida'],$dataGet['regiao']), true);
@@ -137,6 +150,80 @@ class amostrasDAO {
             throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
         }
     }
+    
+    
+    public static function getPesquisaAmostrasHTMLCount($dataGet, $user_id){
+        try {
+            $SQL = " SELECT amostra_id FROM"
+                    . " (SELECT a.amostra_id "
+                    . "   FROM amostras a LEFT JOIN amostras_imagens ai ON a.amostra_id = a.amostra_id "
+                    . "    WHERE a.usuario_id = $user_id "
+                    . "    AND a.tipo ='" . $dataGet['tipo'] . "'"
+                    . "    AND a.bebida = '" . $dataGet['bebida'] . "'"
+                    . "    AND a.regiao= '" . $dataGet['regiao'] . "'"
+                    . "    AND ai.principal IS NOT NULL"
+                    . "  ) amostragem "
+                    . " GROUP BY amostra_id";
+           $db = new DB();
+           return $db->RowCount($SQL);
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
+
+//    static function getPesquisaAmostrasHTMLCount($dataGet, $user_id) {
+//        try {
+//            $SQL = "SELECT amostra_id "
+//                    . " FROM amostras"
+//                    . " WHERE tipo ='" . $dataGet['tipo'] . "'"
+//                    . " AND bebida = '" . $dataGet['bebida'] . "'"
+//                    . " AND regiao= '" . $dataGet['regiao'] . "'"
+//                    . " AND usuario_id = $user_id";
+//            $db = new DB();
+//            $count = $db->RowCount($SQL);
+//            return $count;
+//        } catch (Exception $err) {
+//            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+//        }
+//    }
+    
+     public static function getPesquisaAmostrasHTML($dataGet, $limit, $user_id){
+        try {
+            $SQL = " SELECT * FROM"
+                    . " (SELECT a.amostra_id,a.n_lote,a.regiao,ai.foto,ai.principal "
+                    . "   FROM amostras a LEFT JOIN amostras_imagens ai ON a.amostra_id = a.amostra_id "
+                    . "    WHERE a.usuario_id = $user_id "
+                    . "    AND a.tipo = ?"
+                    . "    AND a.bebida = ?" 
+                    . "    AND a.regiao= ?"
+                    . "    AND ai.principal IS NOT NULL"
+                    . "    LIMIT $limit) amostragem "
+                    . " GROUP BY amostra_id";
+            $db = new DB();
+            $dados = $db->executeReturnFETCH_ASSOC($SQL, array($dataGet['tipo'], $dataGet['bebida'],$dataGet['regiao']), true);
+            return $dados;
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
+
+//    static function getPesquisaAmostrasHTML($dataGet, $limit, $user_id) {
+//        try {
+//            $SQL = "SELECT * "
+//                    . " FROM amostras"
+//                    . " WHERE tipo ='" . $dataGet['tipo'] . "'"
+//                    . " AND bebida = '" . $dataGet['bebida'] . "'"
+//                    . " AND regiao= '" . $dataGet['regiao'] . "'"
+//                    . " AND usuario_id=" . $user_id
+//                    . " LIMIT $limit";
+//            $db = new DB();
+//            return $db->GetData($db->query($SQL), true);
+//            // return $db->executeReturnFetch($SQL, array($dataGet['tipo'], $dataGet['bebida'],$dataGet['regiao']), true);
+//        } catch (Exception $err) {
+//            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+//        }
+//    }
+
 
     public static function getListaImagens($amostra_id) {
         try {
@@ -170,12 +257,12 @@ class amostrasDAO {
         }
     }
 
-    static function ajax_autocomplete($field, $request) {
+    static function ajax_autocomplete($field, $request, $user_id) {
         try {
             $param = ':search';
             $sql = "SELECT bebida FROM amostras "
                     . " WHERE LOCATE($param, CONVERT($field USING latin1))   "
-                    . " AND usuario_id=" . $_SESSION['admin']
+                    . " AND usuario_id=" . $user_id
                     . " GROUP BY $field"
                     . " ORDER BY $field ASC"
                     . " LIMIT 10";
@@ -186,12 +273,12 @@ class amostrasDAO {
         }
     }
 
-    public static function getListaAmostrasHtml($Limit) {
+    public static function getListaAmostrasHtml($Limit,$user_id) {
         try {
             $sql = " SELECT * FROM"
                     . " (SELECT a.amostra_id,a.n_lote,a.regiao,ai.foto,ai.principal "
                     . "   FROM amostras a LEFT JOIN amostras_imagens ai ON a.amostra_id = a.amostra_id "
-                    . "    WHERE a.usuario_id = 1 "
+                    . "    WHERE a.usuario_id = $user_id "
                     . "    AND ai.principal IS NOT NULL"
                     . "  ) amostragem "
                     . " GROUP BY amostra_id";

@@ -47,6 +47,17 @@ class regiaoDAO {
         }
     }
     
+    public static function listaRegioesHTML($user_id) {
+        try {
+            $SQL = "SELECT * FROM regiao "
+                    . " WHERE usuario_id = ?";
+            $db = new DB();
+            return $db->executeReturnFetch($SQL, array($user_id),true);
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
+    
      public static function listaRegioes() {
         try {
             $SQL = "SELECT * FROM regiao "

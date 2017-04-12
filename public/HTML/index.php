@@ -9,13 +9,42 @@ $filterGET = array(
         'filter' => FILTER_VALIDATE_INT
     )
 );
+$user_id = 1;
+$filterGETBusca = array(
+    'page' => array(
+        'filter' => FILTER_VALIDATE_INT
+    ),
+    'busca' => array(
+        'filter' => FILTER_DEFAULT,
+    ),
+    'tipo' => array(
+        'filter' => FILTER_DEFAULT,
+    ),
+    'bebida' => array(
+        'filter' => FILTER_DEFAULT,
+    ),
+    'regiao' => array(
+        'filter' => FILTER_DEFAULT,
+    )
+);
 $dataGet = filter_input_array(INPUT_GET, $filterGET);
+$dataGetBusca = filter_input_array(INPUT_GET, $filterGETBusca);
+
 if (!$dataGet['page']) {
     $dataGet['page'] = 1;
 }
 try {
-    $paginador = new paginadorHTML($dataGet['page'], 1, 9, '');
-    $dados = amostrasDAO::getListaAmostrasHtml($paginador->getPage());
+    $regioes = regiaoDAO::listaRegioesHTML($user_id);
+    if ($dataGetBusca['bebida'] && $dataGetBusca['regiao']) {
+        $arrayBusca = array('tipo' => $dataGet['tipo'], 'bebida' => $dataGet['bebida'], 'regiao' => $dataGet['regiao'], 'page' => $dataGet['page']);
+        $count = amostrasDAO::getPesquisaAmostrasHTMLCount($dataGetBusca, $user_id);
+        $paginador = new paginadorHTML($dataGetBusca['page'], $count, 9, '', $arrayBusca);
+        $dados = amostrasDAO::getPesquisaAmostrasHTML($dataGetBusca, $paginador->getPage(), $user_id);
+    } else {
+        $count = amostrasDAO::getListaAmostrasHTMLCount($user_id);
+        $paginador = new paginadorHTML($dataGet['page'], $count, 9, '');
+        $dados = amostrasDAO::getListaAmostrasHtml($paginador->getPage(), $user_id);
+    }
 } catch (Exception $err) {
     $response['error'][] = $err->getMessage();
 }
@@ -39,7 +68,8 @@ try {
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color4.css" title="color4" media="all" />
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color5.css" title="color5" media="all" />
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color6.css" title="color6" media="all" />
-
+        <script src="../../admin/assets/js/autocomplete.js"></script>
+        <link href="../../assets/css/autocomplete.css" rel="stylesheet">
 
         <!--[if lt IE 9]>
         <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -126,7 +156,7 @@ try {
                         <nav class="b-topBar__nav">
                             <ul>
                                 <li><a href="#">Cart</a></li>
-                                <li><a href="#">Register</a></li>
+                                <li><a href="cadastro"><?= $tl['menu']['m2'] ?></a></li>
                                 <li><a href="login"><?= $tl['menu']['m1'] ?></a></li>
                             </ul>
                         </nav>
@@ -273,64 +303,60 @@ try {
                 <div class="row">
                     <div class="col-lg-3 col-sm-4 col-xs-12">
                         <aside class="b-items__aside">
-                            <h2 class="s-title wow zoomInUp" data-wow-delay="0.5s">Filtrar Busca</h2>
+                            <!--                            <h2 class="s-title wow zoomInUp" data-wow-delay="0.5s">Filtrar Busca</h2>-->
                             <div class="b-items__aside-main wow zoomInUp" data-wow-delay="0.5s">
-                                <form>
+                                <form method="get">
+                                    <input name="page" type="hidden"  value="<?= $dataGet['page']; ?>">
                                     <div class="b-items__aside-main-body">
                                         <div class="b-items__aside-main-body-item">
-                                            <label>SELECT A MAKE</label>
+                                            <div style="">
+                                                <div class="form-group" style="">
+                                                    <div class="pull-left">
+                                                        <label>
+                                                            <input type="radio" value="arabica"  name="tipo" <?php if ($dataGetBusca['tipo'] == "arabica" || empty($dataGetBusca['tipo'])) echo " checked"; ?> > Arábica 
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group" style="">
+                                                    <div class="pull-left">
+                                                        <label style="margin-left: 4em;">
+                                                            <input type="radio" value="conilon"  name="tipo" <?php if ($dataGetBusca['tipo'] == "conilon") echo " checked"; ?>> Conilon
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="b-items__aside-main-body-item">
+                                            <label style="float:left;margin-top: 10px;">DIGITE A BEBIDA</label>
                                             <div>
-                                                <select name="select1" class="m-select">
-                                                    <option value="" selected="">Any Make</option>
+                                                <input type="text" class="form-control" name="bebida" style="color:#cccccc;background: #444 none repeat scroll 0 0;border-radius: 30px;border: medium none;height:43px;padding: 12px 0 12px 20px;font-family:sans-serif "  placeholder="Bebida" value="<?= $dataGetBusca['bebida'] ?>">
+                                            </div>
+                                        </div>
+
+                                        <div class="b-items__aside-main-body-item">
+                                            <label>SELECIONE A REGIÃO</label>
+                                            <div>
+                                                <select class="m-select" name="regiao" >
+                                                    <option value="" selected="">Região</option>
+                                                    <?php
+                                                    if (is_array($regioes)) {
+                                                        foreach ($regioes as $regiao) {
+                                                            ?>
+                                                            <option value="<?= $regiao->descricao ?>" <?php echo $dataGetBusca['regiao'] == $regiao->descricao ? ' selected' : ''; ?>><?= $regiao->descricao ?></option>
+                                                            <?php
+                                                        }
+                                                    }
+                                                    ?>
                                                 </select>
                                                 <span class="fa fa-caret-down"></span>
                                             </div>
                                         </div>
-                                        <div class="b-items__aside-main-body-item">
-                                            <label>SELECT A MODEL</label>
-                                            <div>
-                                                <select name="select1" class="m-select">
-                                                    <option value="" selected="">Any Make</option>
-                                                </select>
-                                                <span class="fa fa-caret-down"></span>
-                                            </div>
-                                        </div>
-                                        <div class="b-items__aside-main-body-item">
-                                            <label>PRICE RANGE</label>
-                                            <div class="slider"></div>
-                                            <input type="hidden" name="min" value="100" class="j-min" />
-                                            <input type="hidden" name="max" value="1000" class="j-max" />
-                                        </div>
-                                        <div class="b-items__aside-main-body-item">
-                                            <label>VEHICLE TYPE</label>
-                                            <div>
-                                                <select name="select1" class="m-select">
-                                                    <option value="" selected="">Any Type</option>
-                                                </select>
-                                                <span class="fa fa-caret-down"></span>
-                                            </div>
-                                        </div>
-                                        <div class="b-items__aside-main-body-item">
-                                            <label>VEHICLE STATUS</label>
-                                            <div>
-                                                <select name="select1" class="m-select">
-                                                    <option value="" selected="">Any Status</option>
-                                                </select>
-                                                <span class="fa fa-caret-down"></span>
-                                            </div>
-                                        </div>
-                                        <div class="b-items__aside-main-body-item">
-                                            <label>FUEL TYPE</label>
-                                            <div>
-                                                <select name="select1" class="m-select">
-                                                    <option value="" selected="">All Fuel Types</option>
-                                                </select>
-                                                <span class="fa fa-caret-down"></span>
-                                            </div>
-                                        </div>
+
                                     </div>
                                     <footer class="b-items__aside-main-footer">
-                                        <button type="submit" class="btn m-btn">FILTER VEHICLES<span class="fa fa-angle-right"></span></button><br />
+                                        <button type="submit" class="btn m-btn">BUSCAR<span class="fa fa-angle-right"></span></button><br />
                                         <a href="">RESET ALL FILTERS</a>
                                     </footer>
                                 </form>
@@ -355,46 +381,45 @@ try {
                             <?php
                             if (is_array($dados)) {
                                 foreach ($dados as $dado) {
-                                    
-                                }
-                                ?>
-                                <div class="col-lg-4 col-md-6 col-xs-12 wow zoomInUp" data-wow-delay="0.5s">
-                                    <div class="b-items__cell">
-                                        <div class="b-items__cars-one-img">
-                                            <img class='img-responsive' src="../../upload/<?= $dado['foto'] ?>" alt='chevrolet'/>
-                                            <a href="#" data-toggle="modal" data-target="#myModal" class="b-items__cars-one-img-video"><span class="fa fa-film"></span>VIDEO</a>
-                                            <span class="b-items__cars-one-img-type m-premium">PREMIUM</span>
-                                            <form action="/" method="post">
-    <!--                                            <input type="checkbox" name="check1" id='check1'/>-->
-    <!--                                            <label for="check1" class="b-items__cars-one-img-check"><span class="fa fa-check"></span></label>-->
-                                            </form>
-                                        </div>
-                                        <div class="b-items__cell-info">
-                                            <div class="s-lineDownLeft b-items__cell-info-title">
-                                                <h2 class=""><a href="detail.php?amostra_id=<?= $dado['amostra_id'] ?>">Lote <?= $dado['n_lote'] ?></a></h2>
+                                    ?>
+                                    <div class="col-lg-4 col-md-6 col-xs-12 wow zoomInUp" data-wow-delay="0.5s">
+                                        <div class="b-items__cell">
+                                            <div class="b-items__cars-one-img">
+                                                <img class='img-responsive' src="../../upload/<?= $dado['foto'] ?>" alt='chevrolet'/>
+                                                <a href="#" data-toggle="modal" data-target="#myModal" class="b-items__cars-one-img-video"><span class="fa fa-film"></span>VIDEO</a>
+                                                <span class="b-items__cars-one-img-type m-premium">PREMIUM</span>
+                                                <form action="/" method="post">
+        <!--                                            <input type="checkbox" name="check1" id='check1'/>-->
+        <!--                                            <label for="check1" class="b-items__cars-one-img-check"><span class="fa fa-check"></span></label>-->
+                                                </form>
                                             </div>
-                                            <p>Lorem ipsum dolor sit amet consec let radipisicing elit, sed do eiusmod  ...</p>
-                                            <div>
-                                                <div class="row m-smallPadding">
-                                                    <div class="col-xs-5">
-                                                        <span class="b-items__cars-one-info-title">Body Style:</span>
-                                                        <span class="b-items__cars-one-info-title">Mileage:</span>
-                                                        <span class="b-items__cars-one-info-title">Transmission:</span>
-                                                        <span class="b-items__cars-one-info-title">Specs:</span>
-                                                    </div>
-                                                    <div class="col-xs-7">
-                                                        <span class="b-items__cars-one-info-value">Sedan</span>
-                                                        <span class="b-items__cars-one-info-value">35,000 KM</span>
-                                                        <span class="b-items__cars-one-info-value">6-Speed Auto</span>
-                                                        <span class="b-items__cars-one-info-value">2-Passenger, 2-Door</span>
+                                            <div class="b-items__cell-info">
+                                                <div class="s-lineDownLeft b-items__cell-info-title">
+                                                    <h2 class=""><a href="detail.php?amostra_id=<?= $dado['amostra_id'] ?>">Lote <?= $dado['n_lote'] ?></a></h2>
+                                                </div>
+                                                <p>Lorem ipsum dolor sit amet consec let radipisicing elit, sed do eiusmod  ...</p>
+                                                <div>
+                                                    <div class="row m-smallPadding">
+                                                        <div class="col-xs-5">
+                                                            <span class="b-items__cars-one-info-title">Body Style:</span>
+                                                            <span class="b-items__cars-one-info-title">Mileage:</span>
+                                                            <span class="b-items__cars-one-info-title">Transmission:</span>
+                                                            <span class="b-items__cars-one-info-title">Specs:</span>
+                                                        </div>
+                                                        <div class="col-xs-7">
+                                                            <span class="b-items__cars-one-info-value">Sedan</span>
+                                                            <span class="b-items__cars-one-info-value">35,000 KM</span>
+                                                            <span class="b-items__cars-one-info-value">6-Speed Auto</span>
+                                                            <span class="b-items__cars-one-info-value">2-Passenger, 2-Door</span>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <h5 class="b-items__cell-info-price"><span>Price:</span>$29,415</h5>
                                             </div>
-                                            <h5 class="b-items__cell-info-price"><span>Price:</span>$29,415</h5>
                                         </div>
                                     </div>
-                                </div>
-                                <?php
+                                    <?php
+                                }
                             }
                             ?>
                             <div class="col-lg-4 col-md-6 col-xs-12 wow zoomInUp" data-wow-delay="0.5s">
@@ -893,5 +918,6 @@ try {
         <script src="js/wow.min.js"></script>
         <script src="js/jquery.placeholder.min.js"></script>
         <script src="js/theme.js"></script>
+        <script src="../../admin/assets/js/amostras.js"></script>
     </body>
 </html>
