@@ -166,7 +166,7 @@ $("a.Ajax, button.Ajax").on("click", function (e) {
 $("a.AjaxConfirm, button.AjaxConfirm").on("click", function (e) {
     e.preventDefault();
     var btn = $(this);
-    bootbox.confirm("<b><br>Deseja realmente executar a ação?<br><br></b>", function (result) {
+    bootbox.confirm("<br>Deseja realmente executar a ação?<br>", function (result) {
         if (result) {
             btn.prop('disabled', true);
             $.get(btn.attr('href'), function (data) {

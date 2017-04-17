@@ -36,10 +36,6 @@ $(document).ready(function () { //pronto para executar o js
 //                        + data.success + '</div>');
 
             } else if (data.error) {
-//                $('#alerta').html('<div class="alert alert-danger" role="alert"> '
-//                        + '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> '
-//                        + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
-//                        + data.error + '</div>');
                 if (data.error_input) {
                     $('input[name="' + data.error_input + '"').css('border-color', function () {
                         return '#a94442';//*danger
@@ -50,6 +46,11 @@ $(document).ready(function () { //pronto para executar o js
                             + data.error
                             + '</div>');
                     $('input[name="' + data.error_input + '"').focus();
+                }else{
+                    $('#alerta').html('<div class="alert alert-danger" role="alert"> '
+                            + '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> '
+                            + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+                            + data.error + '</div>');
                 }
             } else if (data.success2) {
                 $('#myModal2').modal('hide');

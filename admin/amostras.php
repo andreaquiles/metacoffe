@@ -149,7 +149,7 @@ if (FUNCOES::isAjax()) {
         <link href="../assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <script src="../assets/js/jquery.min.js"></script>
         <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
-        <script src="../assets/bootstrap/js/bootbox.min.js"></script>
+        <script src="../admin/assets/js/bootbox.min.js"></script>
         <script src="../assets/js/autocomplete.js"></script>
         <link href="../assets/css/autocomplete.css" rel="stylesheet">
 
@@ -323,7 +323,7 @@ if (FUNCOES::isAjax()) {
             <div class="container">
             </div>
         </div>
-        <script src="../assets/js/gerenciador.min.js"></script>
+        <script src="../assets/js/gerenciador.min_dev.js"></script>
         <script src="assets/js/amostras.js"></script>
     </body>
 </html>

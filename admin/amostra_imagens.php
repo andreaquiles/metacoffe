@@ -6,7 +6,7 @@ usuariosBO::checkLogin();
 $filterGET = array(
     'action' => array(
         'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array("regexp" => "/^(excluir)$/")
+        'options' => array("regexp" => "/^(excluir|alterar)$/")
     ),
     'page' => array(
         'filter' => FILTER_VALIDATE_INT
@@ -32,7 +32,6 @@ if (isset($_FILES["myfile"]["name"])) {
 }
 
 try {
-
     if ($dataGet['action'] == 'excluir' && $dataGet['foto']) {
         if ($dataGet['amostra_imagem_id']) {
             amostrasDAO::deletarImagens($dataGet['amostra_imagem_id']);
@@ -41,6 +40,17 @@ try {
             }
             $response['success'][] = 'Registro excluído com sucesso!';
             $response['link'] = $_SERVER['PHP_SELF'] . '?amostra_id=' . $dataGet['amostra_id'];
+        }
+    } else {
+        if ($dataGet['action'] == 'alterar') {
+            if ($dataGet['amostra_imagem_id']) {
+                $data = array();
+                $data['principal'] = 1;
+                amostrasDAO::salvar($data, 'amostras_imagens', $dataGet['amostra_imagem_id']);
+                amostrasDAO::updateImagens($dataGet['amostra_imagem_id']);
+                $response['success'][] = 'Imagem alterada com sucesso!';
+                $response['link'] = $_SERVER['PHP_SELF'] . '?amostra_id=' . $dataGet['amostra_id'];
+            }
         }
     }
     /**
@@ -221,9 +231,9 @@ if (FUNCOES::isAjax()) {
                                 </div>
                                 <div class="text-left" >
                                     <div class="form-group col-sm-2" style="padding-left: 0px;width:120px">
-                                          <label>
-                                                <input type="checkbox" value="1"  name="principal"> <span style="font-size: 12px;" class="label label-default"> Principal</span>
-                                            </label>
+                                        <label>
+                                            <input type="checkbox" value="1"  name="principal"> <span style="font-size: 12px;" class="label label-default"> Principal</span>
+                                        </label>
 <!--                                        <input type="text" name="ordem" maxlength="2" class="form-control" value="">-->
                                     </div>
                                 </div>
@@ -269,11 +279,22 @@ if (FUNCOES::isAjax()) {
                         echo "<a  class=\"lightbox\" href=\"../upload/{$img['foto']}\">", basename('../upload/' . $img['foto']), "</a>\n";
                         echo '<br>' . $img['size'] . '<br>';
                         echo $img['mimetype'] . "<br>";
-                        echo '<a class="btn btn-danger btn-xs AjaxConfirm" style="float:right" data-toggle="tooltip" title="Excluir" 
+                        echo '<a class="btn btn-danger btn-xs AjaxConfirm" style="float:right; " data-toggle="tooltip" title="Excluir" 
                          href="' . $_SERVER['SELF'] . '?action=excluir&amostra_imagem_id=' . $img['amostra_imagem_id']
                         . '&foto=' . $img['foto'] . '&amostra_id=' . $dataGet['amostra_id'] . '">
-                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> 
                        </a>';
+                        if (empty($img['principal'])) {
+                            echo '<a class="btn btn-default btn-xs" style="float:right;margin-right:3px" data-toggle="tooltip" title="Tornar principal" 
+                         href="' . $_SERVER['SELF'] . '?action=alterar&amostra_imagem_id=' . $img['amostra_imagem_id']
+                            . '&foto=' . $img['foto'] . '&amostra_id=' . $dataGet['amostra_id'] . '">
+                         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                       </a>';
+                        } else {
+                            echo '<a class="btn btn-warning btn-xs" style="float:right;margin-right:3px" data-toggle="tooltip" title="Principal" href="#">
+                                 <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                 </a>';
+                        }
                         echo "</div>\n";
                     }
                     ?>

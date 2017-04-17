@@ -247,7 +247,7 @@ if (FUNCOES::isAjax()) {
                                 <div class="b-contacts__address-hours-main wow zoomInUp" data-wow-delay="0.5s">
                                     <div class="row">
                                         <div class="col-md-6 col-xs-12">
-                                            <a href="cadastro" class="btn m-btn">Cadastrar<span class="fa fa-angle-right"></span></a>
+                                            <a href="cadastro" class="btn m-btn">Cadastrar conta<span class="fa fa-angle-right"></span></a>
                                         </div>
                                         <div class="col-md-6 col-xs-12">
                                             <h5>Service Department</h5>

@@ -91,14 +91,14 @@ class paginadorHTML {
               $return .= 'Página ' . $this->page . ' de ' . $this->pages . ' ( ' . $this->count . ' - Registros encontrados )';
               $return .= '</div>';
              */
-            $return = '<p class="text-info text-right">';
+            //$return = '<p class="text-info text-right">';
             $return .= 'Página ' . $this->page . ' de ' . $this->pages . ' ( ' . $this->count . ' - Registros encontrados )';
-            $return .= '</p>';
+            //$return .= '</p>';
         } else {
 
-            $return = '<div class="alert alert-warning text-center">';
+            //$return = '<div class="alert alert-warning text-center">';
             $return .= 'Nenhum registro encontrado';
-            $return .= '</div>';
+            //$return .= '</div>';
             /*
               $return = '<p class="text-warning text-right">';
               $return .= 'Nenhum registro encontrado';

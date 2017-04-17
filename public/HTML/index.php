@@ -70,6 +70,15 @@ try {
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color6.css" title="color6" media="all" />
         <script src="../../admin/assets/js/autocomplete.js"></script>
         <link href="../../assets/css/autocomplete.css" rel="stylesheet">
+        <style>
+            .input_pesquisa{
+                color:#cccccc;background: #444 none repeat scroll 0 0;
+                border-radius: 30px;
+                width:100%;
+                border: medium none;height:43px;padding: 12px 0 12px 20px;
+                font-family:sans-serif;font-size:13px;
+            }
+        </style>
 
         <!--[if lt IE 9]>
         <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -241,7 +250,7 @@ try {
             <div class="container">
                 <h1 class="wow zoomInLeft" data-wow-delay="0.5s">Auto Listings</h1>
                 <div class="b-pageHeader__search wow zoomInRight" data-wow-delay="0.5s">
-                    <h3>Your search returned 28 results</h3>
+                    <h3><?php echo $paginador->getInfo(); ?></h3>
                 </div>
             </div>
         </section><!--b-pageHeader-->
@@ -331,14 +340,14 @@ try {
                                         <div class="b-items__aside-main-body-item">
                                             <label style="float:left;margin-top: 10px;">DIGITE A BEBIDA</label>
                                             <div>
-                                                <input type="text" class="form-control" name="bebida" style="color:#cccccc;background: #444 none repeat scroll 0 0;border-radius: 30px;border: medium none;height:43px;padding: 12px 0 12px 20px;font-family:sans-serif "  placeholder="Bebida" value="<?= $dataGetBusca['bebida'] ?>">
+                                                <input type="text" class="input_pesquisa" name="bebida"   placeholder="Bebida" value="<?= $dataGetBusca['bebida'] ?>" required>
                                             </div>
                                         </div>
 
                                         <div class="b-items__aside-main-body-item">
                                             <label>SELECIONE A REGIÃO</label>
                                             <div>
-                                                <select class="m-select" name="regiao" >
+                                                <select class="m-select" name="regiao" required>
                                                     <option value="" selected="">Região</option>
                                                     <?php
                                                     if (is_array($regioes)) {
@@ -395,7 +404,7 @@ try {
                                             </div>
                                             <div class="b-items__cell-info">
                                                 <div class="s-lineDownLeft b-items__cell-info-title">
-                                                    <h2 class=""><a href="detail.php?amostra_id=<?= $dado['amostra_id'] ?>">Lote <?= $dado['n_lote'] ?></a></h2>
+                                                    <h2 class=""><a href="detail?amostra_id=<?= $dado['amostra_id'] ?>">Lote <?= $dado['n_lote'] ?></a></h2>
                                                 </div>
                                                 <p>Lorem ipsum dolor sit amet consec let radipisicing elit, sed do eiusmod  ...</p>
                                                 <div>

@@ -777,8 +777,7 @@
                             } else {
                                 _this.set_messagebox("Dados enviados com sucesso!");
                                 if (data.link) {
-                                    location.reload();
-                                    //window.location = data.link;
+                                    window.location = data.link;
                                 }
                             }
                         }

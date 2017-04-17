@@ -40,7 +40,7 @@ try {
                 if (!empty($dataPost['principal'])){
                     amostrasDAO::updateImagens($amostra_imagem_id);
                 }
-                echo '{"status":"1","link":"amostra_imagens.php"}';
+                echo '{"status":"1","link":"amostra_imagens?amostra_id='.$dataPost['amostra_id'].'"}';
             }
         } else {
             echo '{"status":"0","msg":"Limite da imagem é de {2 MB}"}';

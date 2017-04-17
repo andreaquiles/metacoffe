@@ -34,8 +34,8 @@ try {
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color4.css" title="color4" media="all" />
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color5.css" title="color5" media="all" />
         <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/color6.css" title="color6" media="all" />
-        <link rel="stylesheet" href="css/pygments.css" />
-        <link rel="stylesheet" href="css/easyzoom.css" />
+        <!--        <link rel="stylesheet" href="css/pygments.css" />-->
+        <!--        <link rel="stylesheet" href="css/easyzoom.css" />-->
         <!--[if lt IE 9]>
         <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -255,30 +255,24 @@ try {
                     <div class="row">
                         <div class="col-md-8 col-xs-12">
                             <div class="b-detail__main-info">
-                                <div class="b-detail__main-info-images wow zoomInUp" data-wow-delay="0.5s">
+                                <div class="b-detail__main-info-images wow" data-wow-delay="0.5s">
                                     <div class="row m-smallPadding">
-                                        <div class="col-xs-10">
-
+                                        <div class="col-xs-10 zoomContainer">
                                             <ul class="b-detail__main-info-images-big bxslider enable-bx-slider" data-pager-custom="#bx-pager" data-mode="horizontal" data-pager-slide="true" data-mode-pager="vertical" data-pager-qty="5">
                                                 <?php
                                                 if (is_array($dados)) {
-                                                    foreach ($dados AS $dado) {
+                                                    $i = 0;
+                                                    foreach ($dados as $dado) {
                                                         ?>
-                                                        <li class="s-relative">                                        
-        <!--                                                    <a data-toggle="modal" data-target="#myModal" href="#" class="b-items__cars-one-img-video"><span class="fa fa-film"></span>VIDEO</a>-->
-        <!--                                                            <img class="img-responsive center-block" src="../../upload/<?= $dado['foto'] ?>" alt="nissan" />-->
-                                                            <div class="easyzoom easyzoom--overlay">
-                                                                <a href="../../upload/<?= $dado['foto'] ?>"  >
-                                                                    <img src="../../upload/<?= $dado['foto'] ?>"  >
-                                                                </a>
-                                                            </div>
-                                                        </li>
+                                                        <li class="s-relative"> 
+                                                            <img id="cafe-<?= $i ?>"   src="../../upload/<?= $dado['foto'] ?>" data-zoom-image="../../upload/<?= $dado['foto'] ?>" >
+                                                            </li>
                                                         <?php
+                                                        $i++;
                                                     }
                                                 }
                                                 ?>
                                             </ul>
-
                                         </div>
                                         <div class="col-xs-2 pagerSlider pagerVertical">
                                             <div class="b-detail__main-info-images-small" id="bx-pager">
@@ -288,7 +282,7 @@ try {
                                                     foreach ($dados AS $dado) {
                                                         ?>
                                                         <a href="#" data-slide-index="<?= $i ?>" class="b-detail__main-info-images-small-one">
-                                                            <img class="img-responsive" src="../../upload/<?= $dado['foto'] ?>" alt="nissan" />
+                                                            <img  class="img-responsive" src="../../upload/<?= $dado['foto'] ?>" alt="nissan" />
                                                         </a>
                                                         <?php
                                                         $i++;
@@ -959,37 +953,17 @@ try {
         <script src="js/wow.min.js"></script>
         <script src="js/jquery.placeholder.min.js"></script>
         <script src="js/theme.js"></script>
-        <script src="js/dist/easyzoom.js"></script>
+        <script src="js/jquery.elevatezoom.js"></script>
         <script>
-            // Instantiate EasyZoom instances
-            var $easyzoom = $('.easyzoom').easyZoom();
+            //$("#cafe-0").elevateZoom();
 
-            // Setup thumbnails example
-            var api1 = $easyzoom.filter('.easyzoom--with-thumbnails').data('easyZoom');
-
-            $('.thumbnails').on('click', 'a', function (e) {
-                var $this = $(this);
-
-                e.preventDefault();
-
-                // Use EasyZoom's `swap` method
-                api1.swap($this.data('standard'), $this.attr('href'));
-            });
-
-            // Setup toggles example
-            var api2 = $easyzoom.filter('.easyzoom--with-toggle').data('easyZoom');
-
-            $('.toggle').on('click', function () {
-                var $this = $(this);
-
-                if ($this.data("active") === true) {
-                    $this.text("Switch on").data("active", false);
-                    api2.teardown();
-                } else {
-                    $this.text("Switch off").data("active", true);
-                    api2._init();
-                }
+            $("#cafe-0").elevateZoom({
+                zoomType: "lens",
+                lensShape: "round",
+                lensSize: 200
             });
         </script>
+
+
     </body>
 </html>
