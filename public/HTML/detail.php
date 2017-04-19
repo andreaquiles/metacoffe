@@ -265,8 +265,10 @@ try {
                                                     foreach ($dados as $dado) {
                                                         ?>
                                                         <li class="s-relative"> 
-                                                            <img id="cafe-<?= $i ?>"   src="../../upload/<?= $dado['foto'] ?>" data-zoom-image="../../upload/<?= $dado['foto'] ?>" >
-                                                            </li>
+                                                            <span class="zoom" style="cursor:crosshair" id="cafe-<?= $i ?>" >
+                                                                <img  src="../../upload/<?= $dado['foto'] ?>" data-zoom-image="../../upload/<?= $dado['foto'] ?>" >
+                                                            </span>
+                                                        </li>
                                                         <?php
                                                         $i++;
                                                     }
@@ -953,15 +955,17 @@ try {
         <script src="js/wow.min.js"></script>
         <script src="js/jquery.placeholder.min.js"></script>
         <script src="js/theme.js"></script>
-        <script src="js/jquery.elevatezoom.js"></script>
+        <script src="js/jquery.zoom.min.js"></script>
         <script>
-            //$("#cafe-0").elevateZoom();
-
-            $("#cafe-0").elevateZoom({
-                zoomType: "lens",
-                lensShape: "round",
-                lensSize: 200
-            });
+            <?php
+            $i = 0;
+            foreach ($dados as $dado) {
+                ?>
+                       $('#cafe-<?= $i ?>').zoom();
+                <?php
+                $i++;
+            }
+            ?>
         </script>
 
 

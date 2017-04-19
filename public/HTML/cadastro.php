@@ -553,7 +553,7 @@ if (FUNCOES::isAjax()) {
                                                         <input type="text"  name="razao_social" class="form-control input-lg" value="<?php echo $data['razao_social']; ?>">
                                                     </div>
 
-                                                    <div class="form-group col-sm-3">
+                                                    <div class="form-group col-sm-4">
                                                         <label for="cnpj">CNPJ</label>
                                                         <input type="text"  name="cnpj" class="form-control input-lg" value="<?php echo $data['cnpj']; ?>">
                                                     </div>
