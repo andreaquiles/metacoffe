@@ -107,20 +107,6 @@ class pessoasDAO {
         }
     }
 
-    public static function getLogin($data) {
-        try {
-            $email = $data['email'];
-            $senha = FUNCOES::cryptografar($data['senha']);
-            $sql = "SELECT * FROM pessoas where email='$email' and senha='$senha' ";
-            $db = new DB();
-            $sqlmy = $db->query($sql);
-            $dado = $db->GetData($sqlmy, false);
-            return $dado;
-        } catch (Exception $err) {
-            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
-        }
-    }
-
     public static function checkEmail($email) {
         try {
             $SQL = "SELECT * FROM pessoas_informacao "
@@ -233,6 +219,23 @@ class pessoasDAO {
                     . " AND usuario_id=" . $_SESSION['admin'];
             $db = new DB();
             return $db->RowCount($SQL);
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
+    
+    public static function getLogin($data) {
+        try {
+            $email = $data['email'];
+            $senha = FUNCOES::cryptografar($data['senha']);
+            
+            $sql = "SELECT p.pessoa_id,p.login"
+                    . " FROM pessoas p INNER JOIN pessoas_informacao pi ON p.pessoa_id = pi.pessoa_id"
+                    . " WHERE pi.email='$email' "
+                    . " AND p.password='$senha' ";
+            $db = new DB();
+            $sqlmy = $db->query($sql);
+            return $db->GetData($sqlmy, false);
         } catch (Exception $err) {
             throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
         }

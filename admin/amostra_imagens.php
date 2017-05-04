@@ -90,7 +90,7 @@ if (FUNCOES::isAjax()) {
         <link href="assets/css/imagens.css" rel="stylesheet">
         <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <!--        <script src="assets/js/jquery.forms/jquery.forms.js"></script>-->
-        <script src="assets/bootstrap/js/bootbox.min.js"></script>
+        <script src="assets/js/bootbox.min.js"></script>
         <script src="assets/js/imagelightbox.min.js"></script>
         <script>
             $(function ()
@@ -304,7 +304,7 @@ if (FUNCOES::isAjax()) {
         <div id="footer" class="navbar-default">
 
         </div>
-        <script src="assets/js/gerenciador.min.js"></script>
+        <script src="assets/js/gerenciador.min_dev.js"></script>
         <script type="text/javascript" src="picEdit/src/js/picedit.js"></script>
         <script type="text/javascript">
             NumeroInteiros('ordem');

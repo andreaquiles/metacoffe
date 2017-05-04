@@ -21,8 +21,8 @@ class pessoasBO {
         try {
             $login = pessoasDAO::getLogin($data);
             if ($login) {
-                $_SESSION['cliente_id'] = $login['cliente_id'];
-                $_SESSION['cliente_nome'] = $login['nome'];
+                $_SESSION['pessoa_id'] = $login['pessoa_id'];
+                $_SESSION['login'] = $login['login'];
                 $_SESSION["sessiontimeCliente"]  = time();
             } else {
                 throw new Exception("Login e senha incorretos");

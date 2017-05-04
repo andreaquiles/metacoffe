@@ -234,7 +234,6 @@ if (FUNCOES::isAjax()) {
                         </div>
                         <div class="form-group">
                             <select class="form-control" name="regiao">
-                                <option value="" selected="">Região</option>
                                 <?php
                                 if (is_array($regioes)) {
                                     foreach ($regioes as $regiao) {

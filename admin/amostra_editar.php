@@ -161,11 +161,14 @@ try {
                     $response['success'][] = 'Amostra atualizada com sucesso!!';
                 } else {
                     /**
-                     * (((((((((((((((((( inserir usuario  )))))))))))))))))))))))
+                     * (((((((((((((((((( inserir amostra  )))))))))))))))))))))))
                      */
                     unset($data['amostra_id']);
                     $data['usuario_id'] = $_SESSION['admin'];
-                    $pessoa_id = amostrasBO::salvar($data, 'amostras');
+                    $amostra_id = amostrasBO::salvar($data, 'amostras');
+                    $data = array();
+                    $data['amostra_id'] = $amostra_id;
+                    amostrasBO::salvar($data, 'status');
                     $response['success'][] = 'Amostra inserida com sucesso!!';
                 }
                 $response['link'] = 'javascript:history.go(-1)';

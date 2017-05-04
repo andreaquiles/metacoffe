@@ -97,9 +97,11 @@ class amostrasDAO {
 
     static function getListaAmostrasHTMLCount($user_id) {
         try {
-            $SQL = " SELECT amostra_id "
-                    . " FROM amostras "
-                    . " WHERE usuario_id= " . $user_id;
+            $SQL = " SELECT a.amostra_id "
+                    . " FROM amostras a "
+                    . " INNER JOIN status s ON s.amostra_id = a.amostra_id "
+                    . " WHERE a.usuario_id= " . $user_id
+                    . " AND (s.situacao IS NULL) ";
             $db = new DB();
             $count = $db->RowCount($SQL);
             return $count;
@@ -161,10 +163,12 @@ class amostrasDAO {
             $SQL = " SELECT * FROM"
                     . " (SELECT a.amostra_id "
                     . "   FROM amostras a LEFT JOIN amostras_imagens ai ON a.amostra_id = a.amostra_id "
+                    . "   INNER JOIN status s ON s.amostra_id = a.amostra_id "
                     . "    WHERE a.usuario_id = $user_id "
                     . "    AND a.tipo ='" . $dataGet['tipo'] . "'"
                     . "    AND a.bebida = '" . $dataGet['bebida'] . "'"
                     . "    AND a.regiao= '" . $dataGet['regiao'] . "'"
+                    . "    AND (s.situacao IS NULL) "
                     . "  ) amostragem "
                     . " GROUP BY amostra_id";
             $db = new DB();
@@ -180,11 +184,12 @@ class amostrasDAO {
             $SQL = " SELECT * FROM"
                     . " (SELECT a.amostra_id,a.n_lote,a.regiao,ai.foto,ai.principal "
                     . "   FROM amostras a LEFT JOIN amostras_imagens ai ON a.amostra_id = a.amostra_id "
+                    . "   INNER JOIN status s ON s.amostra_id = a.amostra_id "
                     . "    WHERE a.usuario_id = $user_id "
                     . "    AND a.tipo = ?"
                     . "    AND a.bebida = ?"
                     . "    AND a.regiao= ?"
-                    //. "    AND ai.principal IS NOT NULL"
+                    . "    AND (s.situacao IS NULL) "
                     . "    ORDER BY ai.principal DESC"
                     . "    LIMIT $limit) amostragem "
                     . " GROUP BY amostra_id";
@@ -266,7 +271,9 @@ class amostrasDAO {
             $sql = " SELECT * FROM"
                     . " (SELECT a.amostra_id,a.n_lote,a.regiao,ai.foto,ai.principal "
                     . "    FROM amostras a LEFT JOIN amostras_imagens ai ON a.amostra_id = a.amostra_id "
+                     . "   INNER JOIN status s ON s.amostra_id = a.amostra_id "
                     . "    WHERE a.usuario_id = $user_id "
+                    . "    AND s.situacao IS NULL "
                     . "    ORDER BY ai.principal DESC"
                     . "    LIMIT $Limit"
                     . "  ) amostragem "

@@ -25,15 +25,19 @@ $(document).ready(function () { //pronto para executar o js
             $('input').css('border-color', function () {
                 return '#ccc';//*cinza
             });
-            $('div .alerta_input').remove();
+            $('div .alert-danger').remove();
             if (data.success) {
-                messagesModal(data);
-//                if (data.link) {
-//                    location.href = data.link;
-//                }
-//                $('#alerta').html('<div class="alert alert-success \n\ fade in" role="alert">'
-//                        + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
-//                        + data.success + '</div>');
+                if (data.modal) {
+                    messagesModal(data);
+                } else {
+                    if (data.link) {
+                        location.href = data.link;
+                    }
+                    $('#alerta').html('<div class="alert alert-success \n\ fade in" role="alert">'
+                            + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+                            + data.success + '</div>');
+
+                }
 
             } else if (data.error) {
                 if (data.error_input) {
@@ -46,7 +50,7 @@ $(document).ready(function () { //pronto para executar o js
                             + data.error
                             + '</div>');
                     $('input[name="' + data.error_input + '"').focus();
-                }else{
+                } else {
                     $('#alerta').html('<div class="alert alert-danger" role="alert"> '
                             + '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> '
                             + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
