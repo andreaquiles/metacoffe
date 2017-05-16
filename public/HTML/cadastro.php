@@ -209,6 +209,7 @@ try {
                 $page = $data['page'];
             }
             unset($data['page']);
+            $senha = $datauser['password'];
             $datauser['password'] = FUNCOES::cryptografar($datauser['password']);
             if ($data['tpPessoa'] == 'F') {
                 /**
@@ -265,7 +266,12 @@ try {
                     $data['pessoa_id'] = $pessoa_id;
                     $data['usuario_id'] = $_SESSION['admin'];
                     pessoasBO::salvar($data, 'pessoas_informacao');
+                    $dataLogin = array();
+                    $dataLogin['email']= $data['email'];
+                    $dataLogin['senha']= $senha;
+                    pessoasBO::getLogin($dataLogin);
                     $response['success'][] = 'Cliente inserido com sucesso!!';
+                    $response['link'] = 'javascript:history.go(-1)';
                 }
                 //$response['link'] = 'javascript:history.go(-1)';
             }

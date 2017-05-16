@@ -8,8 +8,86 @@ $filterGET = array(
         'filter' => FILTER_VALIDATE_INT
     )
 );
+$filterPOST = array(
+    'nome' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
+    'email' => array(
+        'filter' => FILTER_VALIDATE_EMAIL
+    ),
+    'telefone_celular' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
+    'text' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
+    'text2' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
+    'valor' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
+    'amostra_id' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
+    'action' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    )
+);
+$dataPost = filter_input_array(INPUT_POST, $filterPOST);
 $dataGet = filter_input_array(INPUT_GET, $filterGET);
 try {
+    if ($dataPost) {
+//        require_once ('../../lib/fpdf/fpdf.php');
+////        $dados = sessaoBO::geMessagesSessao($inputGET['sessao_id'], $_SESSION['user']);
+////        $dadosExportarPDF = $dados;
+////        if ($dadosExportarPDF) {
+//        $relatorio = "contrato";
+//        require_once('../../sealed/controler/pdf.php');exit;
+        if ($dataPost['action'] == 'email') {
+            if (empty($dataPost['nome'])) {
+                $response['error'][] = 'Preencher nome!';
+                $response['error_input'][] = 'nome';
+            } elseif (empty($dataPost['email'])) {
+                $response['error'][] = 'E-mail Inválido!';
+                $response['error_input'][] = 'email';
+            } elseif (empty($dataPost['telefone_celular'])) {
+                $response['error'][] = 'Preencher celular!';
+                $response['error_input'][] = 'telefone_celular';
+            } elseif (empty($dataPost['text'])) {
+                $response['error'][] = 'Preencher mensagem!';
+                $response['error_input'][] = 'text';
+            } else {
+                FUNCOES::email($dataPost);
+            }
+        } elseif ($dataPost['action'] == 'ofertar') {
+            /**
+             * OFERTAR
+             */
+            if (empty($dataPost['valor']) || $dataPost['valor'] == '0,00') {
+                $response['error'][] = 'Preencher valor!';
+                $response['error_input'][] = 'valor';
+            } else {
+                ofertasBO::deletarOferta($dataPost['amostra_id'],$_SESSION['pessoa_id']);
+                $data = array();
+                $data['pessoa_id'] = $_SESSION['pessoa_id'];
+                $data['valor'] = FUNCOES::formatoDecimal($dataPost['valor']);
+                $data['amostra_id'] = $dataPost['amostra_id'];
+                $data['observacao'] = $dataPost['text2'];
+                ofertasBO::salvar($data, 'ofertas');
+                
+                $dataStatus = array();
+                $dataStatus['situacao'] = 'aguardando';
+                statusBO::salvar($dataStatus, 'status', $dataPost['amostra_id']);
+                
+                $response['success'][] = "Oferta enviada com sucesso !!!";
+            }
+        } 
+        if (FUNCOES::isAjax()) {
+            print json_encode($response);
+            exit();
+        }
+    }
     $dados = amostrasDAO::getListaImagensHTML($dataGet['amostra_id'], 1);
 } catch (Exception $err) {
     $response['error'][] = $err->getMessage();
@@ -43,9 +121,7 @@ try {
 
     </head>
     <body class="m-detail" data-scrolling-animations="true" data-equal-height=".b-auto__main-item">
-
-
-        <div id="alerta">
+        <div id="alerta_error">
             <?php
             if (isset($response['error'])) {
                 if (!empty($response['error'])) {
@@ -58,6 +134,7 @@ try {
             }
             ?>
         </div>
+
         <!-- Loader -->
         <div id="page-preloader"><span class="spinner"></span></div>
         <!-- Loader end -->
@@ -118,7 +195,7 @@ try {
                             1-800- 624-5462
                         </div>
                     </div>
-                    
+
                     <?php include_once './assets/include/dropdownLogin.php'; ?>
                 </div>
             </div>
@@ -202,11 +279,11 @@ try {
                     </div>
                     <div class="col-xs-9">
                         <div class="b-infoBar__btns">
-                            <a href="#" class="btn m-btn m-infoBtn">SHARE THIS VEHICLE<span class="fa fa-angle-right"></span></a>
-                            <a href="#" class="btn m-btn m-infoBtn">ADD TO FAVOURITES<span class="fa fa-angle-right"></span></a>
-                            <a href="#" class="btn m-btn m-infoBtn">PRINT THIS PAGE<span class="fa fa-angle-right"></span></a>
+<!--                            <a href="#" class="btn m-btn m-infoBtn">SHARE THIS VEHICLE<span class="fa fa-angle-right"></span></a>-->
+                            <a href="#envio" class="btn m-btn m-infoBtn">ENVIO DE EMAIL<span class="fa fa-angle-right"></span></a>
                             <?php if ($_SESSION['pessoa_id']) { ?>
-                            <a href="#" class="btn m-btn m-infoBtn">COMPRAR AMOSTRA<span class="fa fa-angle-right"></span></a>
+                                <a href="#ofertar" class="btn m-btn m-infoBtn">OFERTAR<span class="fa fa-angle-right"></span></a>
+                                <a href="#" class="btn m-btn m-infoBtn">COMPRAR AMOSTRA<span class="fa fa-angle-right"></span></a>
                             <?php } ?>
                         </div>
                     </div>
@@ -343,10 +420,9 @@ try {
                                 </div>
                                 <div class="b-detail__main-info-text wow zoomInUp" data-wow-delay="0.5s">
                                     <div class="b-detail__main-aside-about-form-links">
-                                        <a href="#" class="j-tab m-active s-lineDownCenter" data-to='#info1'>GENERAL INQUIRY</a>
+                                        <a href="#" class="j-tab m-active s-lineDownCenter" data-to='#info1'>EMAIL</a>
                                         <a href="#" class="j-tab" data-to='#info2'>SCHEDULE TEST DRIVE</a>
-                                        <a href="#" class="j-tab" data-to='#info3'>GENERAL INQUIRY</a>
-                                        <a href="#" class="j-tab" data-to='#info4'>SCHEDULE TEST DRIVE</a>
+                                        <a href="#" class="j-tab" data-to='#info3'>EMAIL</a>
                                     </div>
                                     <div id="info1">
                                         <p>The 2016 Nissan Maxima is powered by a 3.5-liter V6 engine with 300 horsepower, 10 more than the engine in the outgoing
@@ -433,6 +509,7 @@ try {
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-md-4 col-xs-12">
                             <aside class="b-detail__main-aside">
                                 <div class="b-detail__main-aside-desc wow zoomInUp" data-wow-delay="0.5s">
@@ -550,6 +627,7 @@ try {
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="b-detail__main-aside-about wow zoomInUp" data-wow-delay="0.5s">
                                     <h2 class="s-titleDet">INQUIRE ABOUT THIS VEHICLE</h2>
                                     <div class="b-detail__main-aside-about-call">
@@ -560,51 +638,54 @@ try {
                                     <div class="b-detail__main-aside-about-seller">
                                         <p>Seller Info: <span>NissanCarDealer</span></p>
                                     </div>
-                                    <div class="b-detail__main-aside-about-form">
+                                    <div class="b-detail__main-aside-about-form" id="envio">
                                         <div class="b-detail__main-aside-about-form-links">
-                                            <a href="#" class="j-tab m-active s-lineDownCenter" data-to='#form1'>GENERAL INQUIRY</a>
+                                            <a href="#" class="j-tab m-active s-lineDownCenter" data-to='#form1'>ENVIO DE EMAIL</a>
                                             <a href="#" class="j-tab" data-to='#form2'>SCHEDULE TEST DRIVE</a>
                                         </div>
-                                        <form id="form1" action="/" method="post">
-                                            <input type="text" placeholder="YOUR NAME" value="" name="name" />
-                                            <input type="email" placeholder="EMAIL ADDRESS" value="" name="email" />
-                                            <input type="tel" placeholder="PHONE NO." value="" name="name" />
-                                            <textarea name="text" placeholder="message"></textarea>
-                                            <div><input type="checkbox" name="one" value="" /><label>Send me a copy of this message</label></div>
-                                            <div><input type="checkbox" name="two" value="" /><label>Send me a copy of this message</label></div>
-                                            <button type="submit" class="btn m-btn">SEND MESSAGE<span class="fa fa-angle-right"></span></button>
+                                        
+                                        <form id="contactForm" method="post"  novalidate class="s-form wow zoomInUp">
+                                            <input type="hidden" name="action" value="email" />
+                                            <input type="text" class="form-control input-lg" placeholder="NOME" value="" name="nome" />
+                                            <input type="email" class="form-control input-lg" placeholder="EMAIL" value="" name="email" />
+                                            <input type="text" class="form-control input-lg" placeholder="CELULAR" value="" name="telefone_celular" />
+                                            <textarea name="text" style="color: #000;font-size: 18px" placeholder="MENSAGEM"></textarea>
+<!--                                            <div><input type="checkbox" name="one" value="" /><label>Send me a copy of this message</label></div>
+                                            <div><input type="checkbox" name="two" value="" /><label>Send me a copy of this message</label></div>-->
+                                            <button type="submit" class="btn m-btn">ENVIAR MENSAGEM<span class="fa fa-angle-right"></span></button>
                                         </form>
-                                        <form id="form2" action="/" method="post">
-                                            <input type="text" placeholder="YOUR NAME" value="" name="name" />
-                                            <textarea name="text" placeholder="message"></textarea>
-                                            <div><input type="checkbox" name="one" value="" /><label>Send me a copy of this message</label></div>
-                                            <div><input type="checkbox" name="two" value="" /><label>Send me a copy of this message</label></div>
-                                            <button type="submit" class="btn m-btn">SEND MESSAGE<span class="fa fa-angle-right"></span></button>
-                                        </form>
+
+                                        <!--                                        <form id="form2" action="/" method="post">
+                                                                                    <input type="text" placeholder="YOUR NAME" value="" name="name" />
+                                                                                    <textarea name="text" placeholder="message"></textarea>
+                                                                                    <div><input type="checkbox" name="one" value="" /><label>Send me a copy of this message</label></div>
+                                                                                    <div><input type="checkbox" name="two" value="" /><label>Send me a copy of this message</label></div>
+                                                                                    <button type="submit" class="btn m-btn">SEND MESSAGE<span class="fa fa-angle-right"></span></button>
+                                                                                </form>-->
                                     </div>
                                 </div>
-                                <div class="b-detail__main-aside-payment wow zoomInUp" data-wow-delay="0.5s">
-                                    <h2 class="s-titleDet">CAR PAYMENT CALCULATOR</h2>
-                                    <div class="b-detail__main-aside-payment-form">
-                                        <form action="/" method="post">
-                                            <input type="text" placeholder="TOTAL VALUE/LOAN AMOUNT" value="" name="name" />
-                                            <input type="text" placeholder="DOWN PAYMENT" value="" name="name" />
-                                            <div class="s-relative">
-                                                <select name="select" class="m-select">
-                                                    <option value="">LOAN TERM IN MONTHS</option>
-                                                </select>
-                                                <span class="fa fa-caret-down"></span>
-                                            </div>
-                                            <input type="text" placeholder="INTEREST RATE IN %" value="" name="name" />
-                                            <button type="submit" class="btn m-btn">ESTIMATE PAYMENT<span class="fa fa-angle-right"></span></button>
-                                        </form>
-                                    </div>
+
+                                <div class="b-detail__main-aside-payment wow zoomInUp" id="ofertar" data-wow-delay="0.5s">
+                                    <?php if ($_SESSION['pessoa_id']) { ?>
+                                        <h2 class="s-titleDet">OFERTAR</h2>
+                                        <div class="b-detail__main-aside-payment-form">
+                                            <div id="alerta"></div>
+                                            <form method="post">
+                                                <input type="hidden" name="action" value="ofertar" />
+                                                <input type="hidden" name="amostra_id" value="<?= $dataGet['amostra_id'] ?>" />
+                                                <input type="text" class="form-control input-lg valor" placeholder="Valor RS" value="" name="valor" />
+                                                <textarea name="text2" style="color: #000;font-size: 18px" placeholder="MENSAGEM"></textarea>
+                                                <button type="submit" class="btn m-btn">ENVIAR OFERTA<span class="fa fa-angle-right"></span></button>
+                                            </form>
+                                        </div>
+                                    <?php } ?>
                                     <div class="b-detail__main-aside-about-call">
                                         <span class="fa fa-calculator"></span>
                                         <div>$250 <p>PER MONTH</p></div>
                                         <p>Total Number of Payments: <span>50</span></p>
                                     </div>
                                 </div>
+
                             </aside>
                         </div>
                     </div>
@@ -913,6 +994,16 @@ try {
         </footer><!--b-footer-->
         <!--Main-->   
         <script src="js/jquery-1.11.3.min.js"></script>
+        <script src="../../assets/js/jquery.forms/jquery.forms.js"></script>
+        <script src="../../assets/js/manager.js"></script>
+        <script src="../../assets/js/jquery.maskedinput.min.js"></script>
+        <script src="../../assets/js/jquery.maskMoney.min.js"></script>
+        <script>
+            $("input.valor").maskMoney({decimal: ",", thousands: ".", allowZero: true});
+        </script>
+        <script src="../../assets/js/typeahead.js"></script>
+        <script src="../../assets/js/tipo_pessoa.min.js"></script>
+
         <script src="js/jquery-ui.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/modernizr.custom.js"></script>
@@ -938,15 +1029,15 @@ try {
         <script src="js/theme.js"></script>
         <script src="js/jquery.zoom.min.js"></script>
         <script>
-            <?php
-            $i = 0;
-            foreach ($dados as $dado) {
-                ?>
-                       $('#cafe-<?= $i ?>').zoom();
-                <?php
-                $i++;
-            }
-            ?>
+<?php
+$i = 0;
+foreach ($dados as $dado) {
+    ?>
+                $('#cafe-<?= $i ?>').zoom();
+    <?php
+    $i++;
+}
+?>
         </script>
 
 

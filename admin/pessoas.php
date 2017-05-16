@@ -162,6 +162,19 @@ if (FUNCOES::isAjax()) {
         </style>
     </head>
     <body>
+        <div id="alerta">
+            <?php
+            if (isset($response['error'])) {
+                if (!empty($response['error'])) {
+                    ?>
+                    <div class="alert alert-danger fade in" role="alert">
+                    <?php echo implode('<br>', $response['error']); ?>
+                    </div>
+                    <?php
+                }
+            }
+            ?>
+        </div>
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

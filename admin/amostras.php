@@ -171,6 +171,19 @@ if (FUNCOES::isAjax()) {
         </style>
     </head>
     <body>
+        <div id="alerta">
+            <?php
+            if (isset($response['error'])) {
+                if (!empty($response['error'])) {
+                    ?>
+                    <div class="alert alert-danger fade in" role="alert">
+                        <?php echo implode('<br>', $response['error']); ?>
+                    </div>
+                    <?php
+                }
+            }
+            ?>
+        </div>
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -286,18 +299,25 @@ if (FUNCOES::isAjax()) {
                                         <input name="selecao" value="<?php echo $dado['amostra_id']; ?>" type="checkbox">
                                         <input name="page" type="hidden"  value="<?= $dataGet['page']; ?>">
                                     </td>
-                                    <td style="width:150px;"><?= $dado['n_lote']; ?></td>
-                                    <td style="width:100px;"><span class="label label-default"><?= $dado['regiao']; ?></span></td>
+                                    <td style="width:80px;"><?= $dado['n_lote']; ?></td>
+                                    <td style="width:80px;"><span class="label label-default"><?= $dado['regiao']; ?></span></td>
                                     <td style="width:65px;" class="text-right">
 
                                         <a class="btn btn-default btn-xs" data-toggle="tooltip" title="Editar" 
                                            href="amostra_editar?amostra_id=<?= $dado['amostra_id']; ?>&page=<?= $dataGet['page']; ?>">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                         </a>
+                                        
                                         <a class="btn btn-default btn-xs" data-toggle="tooltip" title="Imagens" 
                                            href="amostra_imagens.php?amostra_id=<?= $dado['amostra_id']; ?>">
                                             <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
                                         </a>
+                                        <?php if($dado['oferta_id']){ ?>
+                                           <a class="btn btn-warning btn-xs" data-toggle="tooltip" title="Ofertas" 
+                                           href="ofertas.php?amostra_id=<?= $dado['amostra_id']; ?>">
+                                            <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+                                          </a>
+                                        <?php } ?>
                                         <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Excluir" 
                                            href="clientes?action=excluir&amostra_id=<?= $dado['amostra_id']; ?>&page=<?= $dataGet['page']; ?>">
                                             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>

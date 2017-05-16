@@ -69,10 +69,12 @@ class amostrasDAO {
 
     public static function getListaAmostras($Limit) {
         try {
-            $sql = " SELECT amostra_id,n_lote,regiao "
-                    . " FROM amostras "
-                    . " WHERE usuario_id=" . $_SESSION['admin']
+            $sql = " SELECT a.amostra_id,a.n_lote,a.regiao,o.oferta_id "
+                    . " FROM amostras a LEFT JOIN ofertas o ON a.amostra_id = o.amostra_id "
+                    . " WHERE a.usuario_id=" . $_SESSION['admin']
+                    . " GROUP BY a.amostra_id"
                     . " LIMIT $Limit";
+            
             $db = new DB();
             $sqlmy = $db->query($sql);
             $dados = $db->GetData($sqlmy);
@@ -101,7 +103,7 @@ class amostrasDAO {
                     . " FROM amostras a "
                     . " INNER JOIN status s ON s.amostra_id = a.amostra_id "
                     . " WHERE a.usuario_id= " . $user_id
-                    . " AND (s.situacao IS NULL) ";
+                    . " AND ".AMOSTRAS_AVALIABLE;
             $db = new DB();
             $count = $db->RowCount($SQL);
             return $count;
@@ -143,12 +145,13 @@ class amostrasDAO {
 
     static function getPesquisaAmostras($dataGet, $limit) {
         try {
-            $SQL = "SELECT * "
-                    . " FROM amostras"
-                    . " WHERE tipo ='" . $dataGet['tipo'] . "'"
-                    . " AND bebida = '" . $dataGet['bebida'] . "'"
-                    . " AND regiao= '" . $dataGet['regiao'] . "'"
-                    . " AND usuario_id=" . $_SESSION['admin']
+            $SQL = "SELECT a.*,o.oferta_id "
+                    . " FROM amostras a LEFT JOIN ofertas o ON a.amostra_id = o.amostra_id"
+                    . " WHERE a.tipo ='" . $dataGet['tipo'] . "'"
+                    . " AND a.bebida = '" . $dataGet['bebida'] . "'"
+                    . " AND a.regiao= '" . $dataGet['regiao'] . "'"
+                    . " AND a.usuario_id=" . $_SESSION['admin']
+                    . " GROUP BY a.amostra_id"
                     . " LIMIT $limit";
             $db = new DB();
             return $db->GetData($db->query($SQL), true);
@@ -168,7 +171,7 @@ class amostrasDAO {
                     . "    AND a.tipo ='" . $dataGet['tipo'] . "'"
                     . "    AND a.bebida = '" . $dataGet['bebida'] . "'"
                     . "    AND a.regiao= '" . $dataGet['regiao'] . "'"
-                    . "    AND (s.situacao IS NULL) "
+                    . "    AND ".AMOSTRAS_AVALIABLE
                     . "  ) amostragem "
                     . " GROUP BY amostra_id";
             $db = new DB();
@@ -189,7 +192,7 @@ class amostrasDAO {
                     . "    AND a.tipo = ?"
                     . "    AND a.bebida = ?"
                     . "    AND a.regiao= ?"
-                    . "    AND (s.situacao IS NULL) "
+                    . "    AND ".AMOSTRAS_AVALIABLE
                     . "    ORDER BY ai.principal DESC"
                     . "    LIMIT $limit) amostragem "
                     . " GROUP BY amostra_id";
@@ -237,9 +240,10 @@ class amostrasDAO {
     public static function getListaImagensHTML($amostra_id, $usuario_id) {
         try {
             $sql = " SELECT ai.*, a.n_lote "
-                    . " FROM amostras_imagens ai INNER JOIN amostras a "
+                    . " FROM amostras_imagens ai INNER JOIN amostras a INNER JOIN status s "
                     . " WHERE ai.amostra_id=" . $amostra_id
                     . " AND ai.usuario_id=" . $usuario_id
+                    . " AND ".AMOSTRAS_AVALIABLE
                     . " ORDER BY ai.principal DESC ";
             $db = new DB();
             $sqlmy = $db->query($sql);
@@ -273,7 +277,7 @@ class amostrasDAO {
                     . "    FROM amostras a LEFT JOIN amostras_imagens ai ON a.amostra_id = a.amostra_id "
                      . "   INNER JOIN status s ON s.amostra_id = a.amostra_id "
                     . "    WHERE a.usuario_id = $user_id "
-                    . "    AND s.situacao IS NULL "
+                    . "    AND ".AMOSTRAS_AVALIABLE
                     . "    ORDER BY ai.principal DESC"
                     . "    LIMIT $Limit"
                     . "  ) amostragem "

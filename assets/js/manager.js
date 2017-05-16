@@ -25,7 +25,11 @@ $(document).ready(function () { //pronto para executar o js
             $('input').css('border-color', function () {
                 return '#ccc';//*cinza
             });
+            $('textarea').css('border-color', function () {
+                return '#ccc';//*cinza
+            });
             $('div .alert-danger').remove();
+            $('div .alert-success').remove();
             if (data.success) {
                 if (data.modal) {
                     messagesModal(data);
@@ -38,18 +42,18 @@ $(document).ready(function () { //pronto para executar o js
                             + data.success + '</div>');
 
                 }
-
             } else if (data.error) {
+                
                 if (data.error_input) {
-                    $('input[name="' + data.error_input + '"').css('border-color', function () {
+                    $('[name="' + data.error_input + '"]').css('border-color', function () {
                         return '#a94442';//*danger
                     });
-                    $('input[name="' + data.error_input + '"').after('<div class="alert alert-danger alerta_input" style="padding:5px" role="alert">'
+                    $('[name="' + data.error_input + '"]').after('<div class="alert alert-danger alerta_input" style="padding:5px" role="alert">'
                             + '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> '
                             + '<span class="sr-only">Error:</span>'
                             + data.error
                             + '</div>');
-                    $('input[name="' + data.error_input + '"').focus();
+                    $('[name="' + data.error_input + '"]').focus();
                 } else {
                     $('#alerta').html('<div class="alert alert-danger" role="alert"> '
                             + '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> '

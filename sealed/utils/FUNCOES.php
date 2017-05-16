@@ -177,56 +177,47 @@ class FUNCOES {
         return false;
     }
 
-    static function email($destinatario, $Subject, $type, $mensagem) {
+    static function email($dataPost) {
         $response = array();
-        require_once './includes/lib/PHPMailer/PHPMailerAutoload.php';
-        $Mailer = new PHPMailer();
-        // define que será usado SMTP
-        $Mailer->IsSMTP();
-        $Mailer->smtpConnect([
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            ]
-        ]);
-        // envia email HTML
-        $Mailer->isHTML(true);
-        // codificação UTF-8, a codificação mais usada recentemente
-        $Mailer->Charset = 'UTF-8';
-        // Configurações do SMTP
-        $Mailer->SMTPAuth = true;
-        //$Mailer->SMTPDebug = 4;
-        //$Mailer->SMTPSecure = 'ssl';
-        //$Mailer->SMTPSecure = "tls";
-        $Mailer->Host = 'mail.cotaaqui.com.br';
-        $Mailer->Port = 25; // tbm já tentei 465 e tbm sem porta nenhuma
-
-        $Mailer->Username = 'cotacao@cotaaqui.com.br';
-        $Mailer->Password = '*fG1hAgIw$wo';
-
-        // E-Mail do remetente (deve ser o mesmo de quem fez a autenticação
-        // nesse caso seu_login@gmail.com)
-        $Mailer->SetFrom = 'cotacao@cotaaqui.com.br';
-        // Nome do remetente
-        $Mailer->FromName = 'Cota Aqui';
-        // assunto da mensagem
-        $Mailer->Subject = $Subject;
-        // corpo da mensagem
-        if ($type === 'HTML') {
-            $Mailer->Body = $mensagem; //'Mensagem em HTML';
-            // corpo da mensagem em modo texto
-        } else {
-            $Mailer->AltBody = $mensagem; //'Mensagem em texto';
+        $boundary = "XYZ-" . date("dmYis") . "-ZYX";
+        if ($dataPost['anexo']) {
+            $fp = fopen($dataPost['anexo'], "rb"); // abre o arquivo enviado
+            $anexo = fread($fp, filesize($dataPost['anexo'])); // calcula o tamanho
+            $anexo = base64_encode($anexo); // codifica o anexo em base 64
+            fclose($fp); // fecha o arquivo
         }
-        // adiciona destinatário (pode ser chamado inúmeras vezes)
-        $Mailer->addAddress($destinatario);
-        if (!$Mailer->send()) {
-            $response['error'][] = 'Erro do PHPMailer: ' . $Mailer->ErrorInfo;
-        } else {
-            // $response['success'][] = "Email Enviado com sucesso !!!";
+
+        // cabeçalho do email
+        $headers = "MIME-Version: 1.0\n";
+        if ($dataPost['anexo']) {
+            $headers .= "Content-Type: multipart/mixed; ";
         }
-        $Mailer->smtpClose();
+        $headers .= "boundary=$boundary\n";
+        $headers .= "$boundary\n";
+
+        $nome = $dataPost['nome'];
+        $telefone_celular = $dataPost['telefone_celular'];
+        $msg = $dataPost['text'];
+        $para = $dataPost['email'];
+
+        $mensagem = "--$boundary\n";
+        $mensagem .= "Content-Type: text/html; charset='utf-8'\n";
+        $mensagem .= "<strong>Nome: </strong> $nome \r\n";
+        $mensagem .= "<strong>Telefone: </strong> $telefone_celular \r\n";
+        $mensagem .= $msg . "\r\n";
+        $mensagem .= "--$boundary \n";
+        if ($dataPost['anexo']) {
+            $mensagem .= "Content-Type: ".$dataPost["type"]."; name=".$dataPost['nome_anexo']."\r\n";
+            $mensagem .= "Content-Transfer-Encoding: base64 \n";
+            $mensagem .= "Content-Disposition: attachment; filename=".$dataPost['nome_anexo']." \r\n";
+            $mensagem .= "$anexo \n";
+        }
+        $mensagem .= "--$boundary \n";
+        /**
+         * action via get exportar PDF
+         */
+        mail($para, 'assunto', $mensagem, $headers);
+        $response['success'][] = "Email Enviado com sucesso !!!";
         return $response;
     }
 
@@ -258,7 +249,7 @@ class FUNCOES {
                 /* copy source image at a resized size */
                 imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
                 /* create the physical thumbnail image to its destination */
-                imagejpeg($virtual_image, $dest , 100);
+                imagejpeg($virtual_image, $dest, 100);
                 ////
             }
             return $desired_height;
