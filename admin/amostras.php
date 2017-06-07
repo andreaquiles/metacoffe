@@ -69,7 +69,7 @@ if (!$dataGet['page']) {
 try {
     $regioes = regiaoDAO::listaRegioes();
 
-    if (($dataGetBusca['bebida'] && $dataGetBusca['regiao'])){
+    if (($dataGetBusca['bebida'] && $dataGetBusca['regiao'])) {
         $arrayBusca = array('tipo' => $dataGet['tipo'], 'bebida' => $dataGet['bebida'], 'regiao' => $dataGet['regiao'], 'page' => $dataGet['page']);
         $count = amostrasDAO::getPesquisaAmostrasCount($dataGetBusca);
         $paginador = new paginador($dataGetBusca['page'], $count, 20, '', $arrayBusca);
@@ -226,7 +226,7 @@ if (FUNCOES::isAjax()) {
                 <div class="form-group pull-right">
                     <form class="form-inline pull-right noAjax" method="get">
                         <input name="page" type="hidden"  value="<?= $dataGet['page']; ?>">
-                        
+
                         <div class="form-group" style="">
                             <div class="checkbox pull-left">
                                 <label>
@@ -307,16 +307,15 @@ if (FUNCOES::isAjax()) {
                                            href="amostra_editar?amostra_id=<?= $dado['amostra_id']; ?>&page=<?= $dataGet['page']; ?>">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                         </a>
-                                        
                                         <a class="btn btn-default btn-xs" data-toggle="tooltip" title="Imagens" 
                                            href="amostra_imagens.php?amostra_id=<?= $dado['amostra_id']; ?>">
                                             <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
                                         </a>
-                                        <?php if($dado['oferta_id']){ ?>
-                                           <a class="btn btn-warning btn-xs" data-toggle="tooltip" title="Ofertas" 
-                                           href="ofertas.php?amostra_id=<?= $dado['amostra_id']; ?>">
-                                            <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
-                                          </a>
+                                        <?php if ($dado['oferta_id'] && empty($dado['venda_id'])) { ?>
+                                            <a class="btn btn-warning btn-xs" data-toggle="tooltip" title="Ofertas" 
+                                               href="ofertas.php?amostra_id=<?= $dado['amostra_id']; ?>">
+                                                <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+                                            </a>
                                         <?php } ?>
                                         <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Excluir" 
                                            href="clientes?action=excluir&amostra_id=<?= $dado['amostra_id']; ?>&page=<?= $dataGet['page']; ?>">

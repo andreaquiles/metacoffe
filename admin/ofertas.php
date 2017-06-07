@@ -10,18 +10,6 @@ $filterGET = array(
     ),
     'page' => array(
         'filter' => FILTER_VALIDATE_INT
-    ),
-    'pessoa_id' => array(
-        'filter' => FILTER_VALIDATE_INT
-    ),
-    'busca' => array(
-        'filter' => FILTER_DEFAULT,
-    ),
-    'nome' => array(
-        'filter' => FILTER_DEFAULT,
-    ),
-    'email' => array(
-        'filter' => FILTER_DEFAULT,
     )
 );
 
@@ -44,39 +32,49 @@ $filterGETBusca = array(
     )
 );
 
-$argsPost = array(
-    'action' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array("regexp" => "/^(excluir|imprimir|exportar_xls)$/")
+$filterPost = array(
+//    'oferta_id' => array(
+//        'filter' => FILTER_VALIDATE_INT
+//    ),
+    'pessoa_id' => array(
+        'filter' => FILTER_VALIDATE_INT
     ),
-    'ids' => array(
-        'filter' => FILTER_VALIDATE_INT,
-        'flags' => FILTER_REQUIRE_ARRAY,
+    'amostra_id' => array(
+        'filter' => FILTER_VALIDATE_INT
     ),
-    'page' => array(
-        'filter' => FILTER_VALIDATE_INT,
+    'valor' => array(
+        'filter' => FILTER_SANITIZE_STRING
     )
 );
 
-$inputPOST = filter_input_array(INPUT_POST, $argsPost);
+$inputPOST = filter_input_array(INPUT_POST, $filterPost);
 $dataGet = filter_input_array(INPUT_GET, $filterGET);
 $dataGetBusca = filter_input_array(INPUT_GET, $filterGETBusca);
-$arrayBusca = array('busca' => $dataGet['busca'], 'nome' => $dataGet['nome'], 'email' => $dataGet['email']);
-
+//$arrayBusca = array('busca' => $dataGet['busca'], 'nome' => $dataGet['nome'], 'email' => $dataGet['email']);
 
 try {
     if (!$dataGet['page']) {
         $dataGet['page'] = 1;
     }
-    if (empty($dataGetBusca['amostra_id'])) {
-  
-        $count = ofertasDAO::getListaOfertasCount();
-        $paginador = new paginador($dataGet['page'], $count, 20, '');
-        $dados = ofertasDAO::getListaOfertas($paginador->getPage());
+
+    if ($inputPOST) {
+        $inputPOST['usuario_id'] = $_SESSION['admin'];
+        vendasDAO::salvar($inputPOST, 'vendas');
+        $data = array();
+        $data['situacao'] = 'vendida';
+        statusDAO::salvar($data, 'status',  $inputPOST['amostra_id']);
+        $response['success'][] = 'Oferta confirmada com sucesso!!';
+        $response['link'] = $_SERVER['PHP_SELF'];
     } else {
-        $count = ofertasDAO::getListaOfertasCountAmostraID($dataGetBusca['amostra_id']);
-        $paginador = new paginador($dataGet['page'], $count, 20, '');
-        $dados = ofertasDAO::getListaOfertasAmostra($paginador->getPage(),$dataGetBusca['amostra_id']);
+        if (empty($dataGetBusca['amostra_id'])) {
+            $count = ofertasDAO::getListaOfertasCount();
+            $paginador = new paginador($dataGet['page'], $count, 20, '');
+            $dados = ofertasDAO::getListaOfertas($paginador->getPage());
+        } else {
+            $count = ofertasDAO::getListaOfertasCountAmostraID($dataGetBusca['amostra_id']);
+            $paginador = new paginador($dataGet['page'], $count, 20, '');
+            $dados = ofertasDAO::getListaOfertasAmostra($paginador->getPage(), $dataGetBusca['amostra_id']);
+        }
     }
     /**
      * action via post EXCLUIR
@@ -99,13 +97,6 @@ try {
 //        }
 //    }
 
-    if (isset($dataGet['action'])) {
-        
-    }
-
-    if (!$dataGet['page']) {
-        $dataGet['page'] = 1;
-    }
 } catch (Exception $e) {
     $response['error'][] = $e->getMessage();
 }
@@ -144,6 +135,61 @@ if (FUNCOES::isAjax()) {
         </style>
     </head>
     <body>
+        <div class="modal fade bd-example-modal-lg" id="modalsession" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title" id="texto">Oferta</h3>
+                    </div>
+                    <form name="formoferta" class="form-horizontal">
+                        <input type="hidden" name="pessoa_id" class="pessoa_id">
+                        <input type="hidden" name="amostra_id" class="amostra_id">
+                        <input type="hidden" name="valor" class="valor">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Comprador:</label>
+                                <div class="col-sm-10">
+                                    <p id="oferta_comprador" class="form-control-static">email@example.com</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Oferta:</label>
+                                <div class="col-sm-10">
+                                    <p id="oferta_oferta" style="" class="form-control-static">R$ 1.000.000,00</p>
+                                </div>
+                            </div>
+                            <div class="form-group" id="oferta_observacao_div" style="display: none">
+                                <label class="col-sm-2 control-label">Observação:</label>
+                                <div class="col-sm-10">
+                                    <p id="oferta_observacao" style="" class="form-control-static">R$ 1.000.000,00</p>
+                                </div>
+                            </div>
+                            <!--                            <div class="form-group">
+                                                            <div class="col-sm-offset-2 col-sm-10">
+                                                                <div class="checkbox">
+                                                                    <label>
+                                                                        <input type="checkbox"> Comprar
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>-->
+                            <div class="padded-box">
+                                <div id="archive">
+                                    <ul class="list-group">
+                                        <div id="conversacao"></div>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="modal-footer" id="buttons-modal">
+                                <button type="submit" class="btn btn-success">Confirmar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div id="alerta">
             <?php
             if (isset($response['error'])) {
@@ -243,14 +289,21 @@ if (FUNCOES::isAjax()) {
                                     </td>
                                     <td style="width:30px;"><?= $dado['n_lote']; ?></td>
                                     <td style="width:30px;"><span class="label label-warning"><?= $dado['situacao']; ?></span></td>
-                                    <td style="width:50px;"><?= 'R$ '.FUNCOES::formatoDecimalHTML($dado['valor_oferta']); ?></td>
+                                    <td style="width:50px;"><?= 'R$ ' . FUNCOES::formatoDecimalHTML($dado['valor_oferta']); ?></td>
                                     <td style="width:100px;"><span class=""><?= $nome; ?></span></td>
                                     <td style="width:65px;" class="text-right">
 
-                                        <a class="btn btn-default btn-xs" data-toggle="tooltip" title="Editar" 
-                                           href="pessoa_editar?pessoa_id=<?= $dado['pessoa_id']; ?>&page=<?= $dataGet['page']; ?>">
-                                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                        <a type="button" onclick="EditarOferta('<?= $dado['oferta_id'] ?>', 'load_oferta', 'formoferta')" 
+                                           class="btn btn-default btn-xs" title="Editar" 
+                                           data-target=".bd-example-modal-lg"
+                                           href="#modalsession" data-toggle="modal" > 
+                                            <i class="glyphicon glyphicon-edit"></i>
                                         </a>
+
+                                        <!--                                        <a class="btn btn-default btn-xs" data-toggle="tooltip" title="Editar" 
+                                                                                   href="pessoa_editar?pessoa_id=<?= $dado['pessoa_id']; ?>&page=<?= $dataGet['page']; ?>">
+                                                                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                                                                </a>-->
 
                                         <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Excluir" 
                                            href="clientes?action=excluir&pessoa_id=<?= $dado['pessoa_id']; ?>&page=<?= $dataGet['page']; ?>">
@@ -281,26 +334,24 @@ if (FUNCOES::isAjax()) {
         </div>
         <script src="../assets/js/gerenciador.min.js"></script>
         <script>
-            $('input[name=email]').hide();
-            $('select[name=busca]').change(function () {
-                if (this.value === 'email') {
-                    $('input[name=email]').show();
-                    $('input[name=nome]').hide();
-                    $('input[name=nome]').val("");
-                } else if (this.value === 'nome') {
-                    $('input[name=nome]').show();
-                    $('input[name=email]').hide();
-                    $('input[name=email]').val("");
-                } else {
-                    $('input[name=nome]').hide();
-                    $('input[name=nome]').val("");
-                    $('input[name=email]').hide();
-                    $('input[name=email]').val("");
-
-
-                }
-            });
+                                    $('input[name=email]').hide();
+                                    $('select[name=busca]').change(function () {
+                                        if (this.value === 'email') {
+                                            $('input[name=email]').show();
+                                            $('input[name=nome]').hide();
+                                            $('input[name=nome]').val("");
+                                        } else if (this.value === 'nome') {
+                                            $('input[name=nome]').show();
+                                            $('input[name=email]').hide();
+                                            $('input[name=email]').val("");
+                                        } else {
+                                            $('input[name=nome]').hide();
+                                            $('input[name=nome]').val("");
+                                            $('input[name=email]').hide();
+                                            $('input[name=email]').val("");
+                                        }
+                                    });
         </script>
-        <script src="assets/js/pessoas.js"></script>
+        <script src="assets/js/oferta.min.js"></script>
     </body>
 </html>

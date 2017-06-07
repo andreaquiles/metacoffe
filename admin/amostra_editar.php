@@ -59,7 +59,7 @@ $filterPost = array(
     '14_15_16' => array(
         'filter' => FILTER_SANITIZE_STRING
     ),
-     'tipo' => array(
+    'tipo' => array(
         'filter' => FILTER_SANITIZE_STRING
     ),
     'observacao' => array(
@@ -67,7 +67,16 @@ $filterPost = array(
     ),
     'amostra_id' => array(
         'filter' => FILTER_VALIDATE_INT
-    )
+    ),
+    'valor' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
+    'modalidade' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
+    'embalagem' => array(
+        'filter' => FILTER_SANITIZE_STRING
+    ),
 );
 
 
@@ -140,7 +149,11 @@ try {
             $response['error'][] = 'Preencher 13 Abaixo!';
         } else if ($data['14_15_16'] == NULL) {
             $response['error'][] = 'Preencher 14/15/16!';
-        } else {
+        } else if ($data['modalidade'] == NULL) {
+            $response['error'][] = 'Preencher modalidade!';
+        }else if ($data['embalagem'] == NULL) {
+            $response['error'][] = 'Preencher embalagem!';
+        }else {
             if (!$dataGet['page']) {
                 $page = 1;
             } else {
@@ -148,7 +161,7 @@ try {
             }
             unset($data['page']);
 //            $data['aproveitamento'] = FUNCOES::formatoDecimal( $data['aproveitamento']);
-
+            $data['valor'] = FUNCOES::formatoDecimal($data['valor']);
 
             if (empty($response['error'])) {
                 if ($data['amostra_id']) {
@@ -168,6 +181,7 @@ try {
                     $amostra_id = amostrasBO::salvar($data, 'amostras');
                     $data = array();
                     $data['amostra_id'] = $amostra_id;
+                    $data['usuario_id'] = $_SESSION['admin'];
                     amostrasBO::salvar($data, 'status');
                     $response['success'][] = 'Amostra inserida com sucesso!!';
                 }
@@ -288,7 +302,7 @@ if (FUNCOES::isAjax()) {
                             </div>
 
                             <div class="row">
-                                <div class="form-group col-sm-3">
+                                <div class="form-group col-sm-2">
                                     <label for="razao_social">Quebra (F13+CATA)</label>
                                     <input type="text" class="form-control" maxlength="15" name="quebra_f13_cata" placeholder="" value="<?php echo $data['quebra_f13_cata']; ?>" >
                                 </div>
@@ -296,7 +310,7 @@ if (FUNCOES::isAjax()) {
                                     <label for="">Umidade(%)</label>
                                     <input type="text" maxlength="5" class="form-control"  name="porc_umidade" placeholder="" value="<?php echo $data['porc_umidade']; ?>" >
                                 </div>
-                                <div class="form-group col-sm-4">
+                                <div class="form-group col-sm-2">
                                     <label for="data_fundacao">Região</label>
                                     <select class="form-control" name="regiao">
                                         <option value="" selected="">selecione</option>
@@ -311,11 +325,28 @@ if (FUNCOES::isAjax()) {
                                         ?>
                                     </select>
                                 </div>
+                                <div class="form-group col-sm-2">
+                                    <label for="modalidade">Modalidade</label>
+                                    <select class="form-control" name="modalidade">
+                                        <option value="" selected="">selecione</option>
+                                        <option value="a_retirar" <?php echo $data['modalidade'] == 'a_retirar' ? ' selected' : ''; ?>>A Retirar</option>
+                                        <option value="posto" <?php echo $data['modalidade'] == 'posto' ? ' selected' : ''; ?>>Posto</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-2">
+                                    <label for="embalagem">Embalagem</label>
+                                    <select class="form-control" name="embalagem">
+                                        <option value="" selected="">selecione</option>
+                                        <option value="big_bag" <?php echo $data['embalagem'] == 'big_bag' ? ' selected' : ''; ?>>Big Bag</option>
+                                        <option value="juta" <?php echo $data['embalagem'] == 'juta' ? ' selected' : ''; ?>>Juta</option>
+                                        <option value="granel" <?php echo $data['embalagem'] == 'granel' ? ' selected' : ''; ?>>Granel</option>
+                                    </select>
+                                </div>
                                 <!--                                <div class="form-group col-sm-4">
                                                                     <label for="cnpj">Região</label>
                                                                     <input type="text" class="form-control" name="regiao" placeholder="" value="<?php echo $data['regiao']; ?>" >
                                                                 </div>-->
-                                <div class="form-group col-sm-3">
+                                <div class="form-group col-sm-2">
                                     <label for="cnpj">Safra</label>
                                     <input type="text" class="form-control" name="safra" placeholder="" value="<?php echo $data['safra']; ?>" >
                                 </div>
@@ -360,14 +391,18 @@ if (FUNCOES::isAjax()) {
                                     <label for="cnpj">14/15/16(%)</label>
                                     <input type="text" maxlength="5" class="form-control" name="14_15_16" placeholder="" value="<?php echo $data['14_15_16']; ?>" >
                                 </div>
+                                <div class="form-group col-sm-2">
+                                    <label for="">Valor R$</label>
+                                    <input type="text" maxlength="12" class="form-control valor" name="valor" placeholder="" value="<?php echo FUNCOES::formatoDecimalHTML($data['valor']); ?>" >
+                                </div>
 
                                 <div class="form-group col-sm-12">
                                     <div class="radio pull-left" >
                                         <label>
-                                            <input type="radio" value="arabica"  name="tipo" <?= $data['tipo']=='arabica' ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-default">Arábica</span>
+                                            <input type="radio" value="arabica"  name="tipo" <?= $data['tipo'] == 'arabica' ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-default">Arábica</span>
                                         </label>
                                         <label style="margin-left:1.2em;">
-                                            <input type="radio" value="conilon"  name="tipo" <?= $data['tipo']=='conilon' ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-default">Conilon</span>
+                                            <input type="radio" value="conilon"  name="tipo" <?= $data['tipo'] == 'conilon' ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-default">Conilon</span>
                                         </label>
                                     </div>
                                 </div>

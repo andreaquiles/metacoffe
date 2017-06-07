@@ -13,6 +13,7 @@ jQuery(function () {
     NumeroInteiros('13_abaixo');
     NumeroInteiros('14_15_16');
     $("input.percentual").maskMoney({decimal: ".", thousands: ".", allowZero: true});
+    $("input.valor").maskMoney({decimal: ",", thousands: ".", allowZero: true});
 
 
 //    $(document).on('change', '.btn-file :file', function () {

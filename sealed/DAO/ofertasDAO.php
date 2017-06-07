@@ -26,8 +26,8 @@ class ofertasDAO {
                 }
             }
             if (isset($dbk)) {
-                    $fields['oferta_id'] = $dbk;
-                    $SQL = 'UPDATE ' . $table . ' SET ' . implode(', ', $tmp) . ' WHERE (oferta_id=:oferta_id)';
+                $fields['oferta_id'] = $dbk;
+                $SQL = 'UPDATE ' . $table . ' SET ' . implode(', ', $tmp) . ' WHERE (oferta_id=:oferta_id)';
             } else {
                 $SQL = 'INSERT INTO ' . $table . ' SET ' . implode(', ', $tmp);
             }
@@ -39,11 +39,11 @@ class ofertasDAO {
         }
     }
 
-    public static function deletarOferta($amostra_id,$pessoa_id) {
+    public static function deletarOferta($amostra_id, $pessoa_id) {
         try {
             $sql = 'DELETE FROM ofertas'
                     . ' WHERE amostra_id =' . $amostra_id
-                    . ' AND pessoa_id='.$pessoa_id;
+                    . ' AND pessoa_id=' . $pessoa_id;
             $db = new DB();
             $db->query($sql);
         } catch (Exception $err) {
@@ -51,7 +51,21 @@ class ofertasDAO {
         }
     }
 
-
+    public static function getOfertaEspecifica($oferta_id) {
+        try {
+            $sql = " SELECT o.oferta_id,s.situacao,o.valor valor_oferta,o.amostra_id,o.observacao,p.pessoa_id,p.nome,p.razao_social "
+                    . " FROM ofertas o INNER JOIN status s "
+                    . " INNER JOIN pessoas_informacao p ON p.pessoa_id = o.pessoa_id "
+                    . " WHERE p.usuario_id = " . $_SESSION['admin']
+                    . " AND o.oferta_id=" . $oferta_id;
+            $db = new DB();
+            $sqlmy = $db->query($sql);
+            $dado = $db->GetData($sqlmy, FALSE);
+            return $dado;
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
 
     public static function getListaOfertas($Limit) {
         try {
@@ -60,7 +74,8 @@ class ofertasDAO {
                     . " INNER JOIN amostras A ON o.amostra_id = a.amostra_id "
                     . " INNER JOIN pessoas_informacao p ON p.pessoa_id = o.pessoa_id "
                     . " WHERE p.usuario_id = " . $_SESSION['admin']
-                    . " ORDER BY n_lote,valor DESC"
+                    . " AND ".AMOSTRAS_AVALIABLE
+                    . " ORDER BY n_lote,o.valor DESC"
                     . " LIMIT $Limit";
             $db = new DB();
             $sqlmy = $db->query($sql);
@@ -70,15 +85,14 @@ class ofertasDAO {
             throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
         }
     }
-    
-     
 
     static function getListaOfertasCount() {
         try {
             $SQL = " SELECT o.oferta_id  FROM ofertas o INNER JOIN status s "
                     . " INNER JOIN amostras A ON o.amostra_id = a.amostra_id "
                     . " INNER JOIN pessoas_informacao p ON p.pessoa_id = o.pessoa_id "
-                    . " WHERE p.usuario_id = " . $_SESSION['admin'];
+                    . " WHERE p.usuario_id = " . $_SESSION['admin']
+                    . " AND ".AMOSTRAS_AVALIABLE;
             $db = new DB();
             $count = $db->RowCount($SQL);
             return $count;
@@ -86,14 +100,15 @@ class ofertasDAO {
             throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
         }
     }
-    
+
     static function getListaOfertasCountAmostraID($amostra_id) {
         try {
             $SQL = " SELECT o.oferta_id  FROM ofertas o INNER JOIN status s "
                     . " INNER JOIN amostras A ON o.amostra_id = a.amostra_id "
                     . " INNER JOIN pessoas_informacao p ON p.pessoa_id = o.pessoa_id "
                     . " WHERE p.usuario_id = " . $_SESSION['admin']
-                    . " AND o.amostra_id = ".$amostra_id;
+                    . " AND o.amostra_id = " . $amostra_id
+                    . " AND ".AMOSTRAS_AVALIABLE;
             $db = new DB();
             $count = $db->RowCount($SQL);
             return $count;
@@ -101,16 +116,17 @@ class ofertasDAO {
             throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
         }
     }
-    
-    public static function getListaOfertasAmostra($Limit,$amostra_id) {
+
+    public static function getListaOfertasAmostra($Limit, $amostra_id) {
         try {
             $sql = " SELECT o.oferta_id,a.n_lote,s.situacao,o.valor valor_oferta,p.pessoa_id,p.nome,p.razao_social "
                     . " FROM ofertas o  INNER JOIN status s "
                     . " INNER JOIN amostras A ON o.amostra_id = a.amostra_id "
                     . " INNER JOIN pessoas_informacao p ON p.pessoa_id = o.pessoa_id "
                     . " WHERE p.usuario_id = " . $_SESSION['admin']
-                    . " AND o.amostra_id = ".$amostra_id
-                    . " ORDER BY n_lote,valor DESC"
+                    . " AND o.amostra_id = " . $amostra_id
+                    . " AND ".AMOSTRAS_AVALIABLE
+                    . " ORDER BY n_lote,o.valor DESC"
                     . " LIMIT $Limit";
             $db = new DB();
             $sqlmy = $db->query($sql);
@@ -144,7 +160,6 @@ class ofertasDAO {
             $db = new DB();
             $sqlmy = $db->query($SQL);
             $dado = $db->GetData($sqlmy, false);
-
             return $dado;
         } catch (Exception $err) {
             throw new Exception($err->getMessage() . ': ' . __FUNCTION__);

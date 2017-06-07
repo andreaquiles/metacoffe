@@ -67,13 +67,14 @@ class amostrasDAO {
         }
     }
 
-    public static function getListaAmostras($Limit) {
+    public static function getListaAmostras($limit) {
         try {
-            $sql = " SELECT a.amostra_id,a.n_lote,a.regiao,o.oferta_id "
+            $sql = " SELECT a.amostra_id,a.n_lote,a.regiao,o.oferta_id,v.venda_id "
                     . " FROM amostras a LEFT JOIN ofertas o ON a.amostra_id = o.amostra_id "
+                    . " LEFT JOIN vendas v ON v.amostra_id = a.amostra_id"
                     . " WHERE a.usuario_id=" . $_SESSION['admin']
                     . " GROUP BY a.amostra_id"
-                    . " LIMIT $Limit";
+                    . " LIMIT $limit";
             
             $db = new DB();
             $sqlmy = $db->query($sql);
@@ -145,8 +146,9 @@ class amostrasDAO {
 
     static function getPesquisaAmostras($dataGet, $limit) {
         try {
-            $SQL = "SELECT a.*,o.oferta_id "
+            $SQL = "SELECT a.*,o.oferta_id,v.venda_id "
                     . " FROM amostras a LEFT JOIN ofertas o ON a.amostra_id = o.amostra_id"
+                    . " LEFT JOIN vendas v ON v.amostra_id = a.amostra_id"
                     . " WHERE a.tipo ='" . $dataGet['tipo'] . "'"
                     . " AND a.bebida = '" . $dataGet['bebida'] . "'"
                     . " AND a.regiao= '" . $dataGet['regiao'] . "'"
@@ -270,7 +272,7 @@ class amostrasDAO {
         }
     }
 
-    public static function getListaAmostrasHtml($Limit, $user_id) {
+    public static function getListaAmostrasHtml($limit, $user_id) {
         try {
             $sql = " SELECT * FROM"
                     . " (SELECT a.amostra_id,a.n_lote,a.regiao,ai.foto,ai.principal "
@@ -279,7 +281,7 @@ class amostrasDAO {
                     . "    WHERE a.usuario_id = $user_id "
                     . "    AND ".AMOSTRAS_AVALIABLE
                     . "    ORDER BY ai.principal DESC"
-                    . "    LIMIT $Limit"
+                    . "    LIMIT $limit"
                     . "  ) amostragem "
                     . " GROUP BY amostra_id";
             $db = new DB();
