@@ -77,6 +77,10 @@ $filterPost = array(
     'embalagem' => array(
         'filter' => FILTER_SANITIZE_STRING
     ),
+    'data_expiracao' => array(
+        'filter' => FILTER_VALIDATE_REGEXP,
+        'options' => array("regexp" => "/^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/")
+    )
 );
 
 
@@ -151,8 +155,10 @@ try {
             $response['error'][] = 'Preencher 14/15/16!';
         } else if ($data['modalidade'] == NULL) {
             $response['error'][] = 'Preencher modalidade!';
-        }else if ($data['embalagem'] == NULL) {
+        } else if ($data['embalagem'] == NULL) {
             $response['error'][] = 'Preencher embalagem!';
+        }else if ($data['data_expiracao'] == NULL) {
+            $response['error'][] = 'Data de Expiracao Inválida!';
         }else {
             if (!$dataGet['page']) {
                 $page = 1;
@@ -162,6 +168,7 @@ try {
             unset($data['page']);
 //            $data['aproveitamento'] = FUNCOES::formatoDecimal( $data['aproveitamento']);
             $data['valor'] = FUNCOES::formatoDecimal($data['valor']);
+            $data['data_expiracao'] = FUNCOES::formatarDatatoMYSQL($data['data_expiracao']);
 
             if (empty($response['error'])) {
                 if ($data['amostra_id']) {
@@ -195,6 +202,7 @@ try {
     if ($dataGet['amostra_id']) {
         try {
             $data = amostrasDAO::getAmostra($dataGet['amostra_id']);
+            $data['data_expiracao'] = FUNCOES::formatarDatatoHTML($data['data_expiracao']);
         } catch (Exception $err) {
             $response['error'][] = $err->getMessage();
         }
@@ -226,6 +234,10 @@ if (FUNCOES::isAjax()) {
         <script src="assets/js/typeahead.js"></script>
         <script src="assets/js/tipo_pessoa.min.js"></script>
         <script src="assets/js/jquery.maskMoney.min.js"></script>
+        
+        <script src="assets/js/bootstrap-datepicker.js"></script>
+        <script src="assets/js/bootstrap-datepicker.pt-BR.js"></script>
+        <link href="assets/css/datepicker3.css" rel="stylesheet" type="text/css"/>
         <style>
 
             #footer {
@@ -395,6 +407,10 @@ if (FUNCOES::isAjax()) {
                                     <label for="">Valor R$</label>
                                     <input type="text" maxlength="12" class="form-control valor" name="valor" placeholder="" value="<?php echo FUNCOES::formatoDecimalHTML($data['valor']); ?>" >
                                 </div>
+                                 <div class="form-group col-sm-2">
+                                    <label for="">Data Expiração</label>
+                                    <input type="text" data-toggle="datepicker" class="form-control" name="data_expiracao" value="<?= $data['data_expiracao'] ?>" >
+                                </div>
 
                                 <div class="form-group col-sm-12">
                                     <div class="radio pull-left" >
@@ -453,13 +469,7 @@ if (FUNCOES::isAjax()) {
             <div class="container">
             </div>
         </div>
-
         <script src="assets/js/amostras_editar.min_dev.js"></script>
         <script src="assets/js/gerenciador.min.js"></script>
-        <script>
-
-
-        </script>
-
     </body>
 </html>

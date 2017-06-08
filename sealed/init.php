@@ -38,4 +38,4 @@ define('MSG_CLIQUE_LINK', "Clique no link ao lado");
 /* =============================
    Constantes do Mysql
 =========================== */
-define('AMOSTRAS_AVALIABLE', "(s.situacao IS NULL OR s.situacao = 'aguardando')");
+define('AMOSTRAS_AVALIABLE', "(s.situacao IS NULL OR s.situacao = 'aguardando') AND data_expiracao >= CURDATE() ");

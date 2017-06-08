@@ -179,9 +179,11 @@ try {
                 $response['error'][] = 'Razão Social Inválida!';
             } else if ($data['cnpj'] == NULL) {
                 $response['error'][] = 'CNPJ Inválido!';
-            } else if ($data['data_fundacao'] == NULL) {
-                $response['error'][] = 'Data Fundacao Inválida!';
-            } else if ($data['inscricao_estadual'] == NULL) {
+            } 
+//            else if ($data['data_fundacao'] == NULL) {
+//                $response['error'][] = 'Data Fundacao Inválida!';
+//            } 
+            else if ($data['inscricao_estadual'] == NULL) {
                 $response['error'][] = 'Inscrição Estadual Inválida!';
             } else if ($data['inscricao_municipal'] == NULL) {
                 $response['error'][] = 'Inscrição Municipal Inválida!';
@@ -279,7 +281,7 @@ try {
                     $response['error'][] = 'CNPJ do Usuário  já cadastrada !!!';
                 }
 //                
-                $data['data_fundacao'] = FUNCOES::formatarDatatoMYSQL($data['data_fundacao']);
+                //$data['data_fundacao'] = FUNCOES::formatarDatatoMYSQL($data['data_fundacao']);
             }
 
 
@@ -331,7 +333,7 @@ try {
             $data = pessoasBO::getPessoa($dataGet['pessoa_id']);
             $endereco = unserialize($data['endereco']);
             $data['data_nascimento'] = FUNCOES::formatarDatatoHTML($data['data_nascimento']);
-            $data['data_fundacao'] = FUNCOES::formatarDatatoHTML($data['data_fundacao']);
+            //$data['data_fundacao'] = FUNCOES::formatarDatatoHTML($data['data_fundacao']);
             if ($data['data_vencimento']) {
                 $data['data_vencimento'] = FUNCOES::formatarDatatoHTML($data['data_vencimento']);
             }
@@ -462,7 +464,7 @@ if (FUNCOES::isAjax()) {
                                                  * Pessoa Física
                                                  */
                                                 ?>
-                                                <div class="form-group col-sm-3">
+                                                <div class="form-group col-sm-2">
                                                     <label for="tpPessoa">Pessoa Tipo</label>
                                                     <select class="form-control" name="tpPessoa">
                                                         <option value="J" <?php echo $data['tpPessoa'] == 'J' ? 'selected' : ''; ?>>Jurídica</option>
@@ -478,7 +480,7 @@ if (FUNCOES::isAjax()) {
                                                         <label for="razao_social">RG</label>
                                                         <input type="text" class="form-control" name="rg" placeholder="" value="<?php echo $data['rg']; ?>">
                                                     </div>
-                                                    <div class="form-group col-sm-3">
+                                                    <div class="form-group col-sm-2">
                                                         <label for="data_nascimento">Data nascimento</label>
                                                         <input type="text" class="form-control" name="data_nascimento" placeholder="" value="<?php echo $data['data_nascimento']; ?>">
                                                     </div>
@@ -490,19 +492,19 @@ if (FUNCOES::isAjax()) {
                                                  */
                                                 ?>
                                                 <div class="pJuridica" style="display: none;">
-                                                    <div class="form-group col-sm-5">
+                                                    <div class="form-group col-sm-3">
                                                         <label for="razao_social">Razão social</label>
                                                         <input type="text" class="form-control" name="razao_social" placeholder="" value="<?php echo $data['razao_social']; ?>">
                                                     </div>
-                                                    <div class="form-group col-sm-4">
+                                                    <div class="form-group col-sm-2">
                                                         <label for="cnpj">CNPJ</label>
                                                         <input type="text" class="form-control" name="cnpj" placeholder="" value="<?php echo $data['cnpj']; ?>">
                                                     </div>
-                                                    <div class="form-group col-sm-4">
+<!--                                                    <div class="form-group col-sm-2">
                                                         <label for="data_fundacao">Data Fundação</label>
                                                         <input type="text" class="form-control" name="data_fundacao" placeholder="" value="<?php echo $data['data_fundacao']; ?>">
-                                                    </div>
-                                                    <div class="form-group col-sm-4">
+                                                    </div>-->
+                                                    <div class="form-group col-sm-3">
                                                         <label for="inscricao_estadual">Inscrição Estadual <small>(Somente Numeros)</small></label>
                                                         <div class="input-group">
                                                             <input type="text" class="form-control" name="inscricao_estadual" placeholder="" value="<?php echo $data['inscricao_estadual']; ?>" <?php echo ($data['inscricao_estadual'] == 'ISENTO') ? 'readonly' : ''; ?>>
@@ -510,16 +512,7 @@ if (FUNCOES::isAjax()) {
                                                                 <button type="button" class="btn btn-primary inscricao_estadual"><?php echo ($data['inscricao_estadual'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO'; ?></button>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group col-sm-4">
-                                                        <label for="inscricao_municipal">Inscrição Municipal <small>(Somente Numeros)</small></label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" name="inscricao_municipal" placeholder="" value="<?php echo $data['inscricao_municipal']; ?>" <?php echo ($data['inscricao_municipal'] == 'ISENTO') ? 'readonly' : ''; ?>>
-                                                            <div class="input-group-btn">
-                                                                <button type="button" class="btn btn-primary inscricao_municipal"><?php echo ($data['inscricao_municipal'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO'; ?></button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    </div>                                                    
                                                 </div>
 
                                             </div>

@@ -140,6 +140,9 @@ try {
         } else if (empty($datauser['password'])) {
             $response['error'][] = 'Preencher senha corretamente!';
             $response['error_input'][] = 'password';
+        } else if ($datauser['password'] != $_POST['repetir']) {
+            $response['error'][] = 'Senhas não conferem !!!';
+            $response['error_input'][] = 'password';
         }
         if ($data['tpPessoa'] == 'F' && empty($response['error'])) {
             if ($data['cpf'] == NULL) {
@@ -162,10 +165,11 @@ try {
             } else if (!empty(pessoasBO::getCpfCnpj($data['cnpj']))) {
                 $response['error'][] = 'CNPJ já cadastrado !!!';
                 $response['error_input'][] = 'cnpj';
-            } else if ($data['data_fundacao'] == NULL) {
-                $response['error'][] = 'Data Fundacao Inválida!';
-                $response['error_input'][] = 'data_fundacao';
             }
+//            else if ($data['data_fundacao'] == NULL) {
+//                $response['error'][] = 'Data Fundacao Inválida!';
+//                $response['error_input'][] = 'data_fundacao';
+//            }
 //            else if ($data['inscricao_estadual'] == NULL) {
 //                $response['error'][] = 'Inscrição Estadual Inválida!';
 //                $response['error_input'][] = 'inscricao_estadual';
@@ -193,10 +197,11 @@ try {
             } else if (empty($data_endereco['cep'])) {
                 $response['error'][] = 'cep!';
                 $response['error_input'][] = 'cep';
-            } else if (empty($data_endereco['telefone_celular'])) {
-                $response['error'][] = 'celular!';
-                $response['error_input'][] = 'telefone_celular';
             }
+//            else if (empty($data_endereco['telefone_celular'])) {
+//                $response['error'][] = 'celular!';
+//                $response['error_input'][] = 'telefone_celular';
+//            }
         }
 
         if (empty($response['error'])) {
@@ -267,8 +272,8 @@ try {
                     $data['usuario_id'] = $_SESSION['admin'];
                     pessoasBO::salvar($data, 'pessoas_informacao');
                     $dataLogin = array();
-                    $dataLogin['email']= $data['email'];
-                    $dataLogin['senha']= $senha;
+                    $dataLogin['email'] = $data['email'];
+                    $dataLogin['senha'] = $senha;
                     pessoasBO::getLogin($dataLogin);
                     $response['success'][] = 'Cliente inserido com sucesso!!';
                     $response['link'] = 'javascript:history.go(-1)';
@@ -475,20 +480,22 @@ if (FUNCOES::isAjax()) {
                                                 <input type="hidden" name="pgname" value="<?php echo $dataGet['pgname']; ?>">
                                             </div>
                                             <div class="row">
-                                                <div class="form-group col-sm-5">
+                                                <div class="form-group col-sm-3">
                                                     <label for="razao_social">Email</label>
                                                     <input type="text" name="email" class="form-control input-lg"  placeholder="" value="<?php echo $data['email']; ?>" >
                                                 </div>
-                                                <div class="form-group col-sm-4">
+                                                <div class="form-group col-sm-3">
                                                     <label for="">Login</label>
                                                     <input type="text" name="login" class="form-control input-lg" placeholder="" value="<?php echo $data['login']; ?>" >
                                                 </div>
                                                 <div class="form-group col-sm-3">
                                                     <label for="cnpj">Senha</label>
-                                                    <input type="text" name="password" class="form-control input-lg" placeholder="" value="" >
+                                                    <input type="password" name="password" class="form-control input-lg" placeholder="" value="" >
                                                 </div>
-
-
+                                                <div class="form-group col-sm-3">
+                                                    <label for="cnpj">Repetir Senha</label>
+                                                    <input type="password" name="repetir" class="form-control input-lg" placeholder="" value="" >
+                                                </div>
                                             </div>
                                             <div class="row">
 
@@ -508,7 +515,7 @@ if (FUNCOES::isAjax()) {
                                                         <span class="fa fa-caret-down"></span>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="pFisica">
                                                     <div class="form-group col-sm-3 ">
                                                         <label for="cpf">CPF</label>
@@ -531,7 +538,7 @@ if (FUNCOES::isAjax()) {
                                                 ?>
 
                                                 <div class="pJuridica" style="display: none;">
-                                                   <div class="form-group col-sm-5">
+                                                    <div class="form-group col-sm-5">
                                                         <label for="razao_social">Razão social</label>
                                                         <input type="text"  name="razao_social" class="form-control input-lg" value="<?php echo $data['razao_social']; ?>">
                                                     </div>
@@ -540,28 +547,28 @@ if (FUNCOES::isAjax()) {
                                                         <label for="cnpj">CNPJ</label>
                                                         <input type="text"  name="cnpj" class="form-control input-lg" value="<?php echo $data['cnpj']; ?>">
                                                     </div>
-                                                        <div class="form-group col-sm-4">
-                                                            <label for="data_fundacao">Data Fundação</label>
-                                                            <input type="text"  name="data_fundacao" class="form-control input-lg" value="<?php echo $data['data_fundacao']; ?>">
-                                                        </div>
-                                                        <div class="form-group col-sm-4">
-                                                            <label for="inscricao_estadual">Inscrição Estadual <small>(Somente Numeros)</small></label>
-                                                            <div class="input-group">
-                                                                <input type="text"  name="inscricao_estadual" class="form-control input-lg" value="<?php echo $data['inscricao_estadual']; ?>" <?php echo ($data['inscricao_estadual'] == 'ISENTO') ? 'readonly' : ''; ?>>
-                                                                <div class="input-group-btn">
-                                                                    <button type="button" style="margin-top:-14px;height:46px;" class="btn btn-primary inscricao_estadual"><?php echo ($data['inscricao_estadual'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO '; ?></button>
-                                                                </div>
+                                                    <!--                                                        <div class="form-group col-sm-4">
+                                                                                                                <label for="data_fundacao">Data Fundação</label>
+                                                                                                                <input type="text"  name="data_fundacao" class="form-control input-lg" value="<?php echo $data['data_fundacao']; ?>">
+                                                                                                            </div>-->
+                                                    <div class="form-group col-sm-4">
+                                                        <label for="inscricao_estadual">Inscrição Estadual <small>(Somente Numeros)</small></label>
+                                                        <div class="input-group">
+                                                            <input type="text"  name="inscricao_estadual" class="form-control input-lg" value="<?php echo $data['inscricao_estadual']; ?>" <?php echo ($data['inscricao_estadual'] == 'ISENTO') ? 'readonly' : ''; ?>>
+                                                            <div class="input-group-btn">
+                                                                <button type="button" style="margin-top:-14px;height:46px;" class="btn btn-primary inscricao_estadual"><?php echo ($data['inscricao_estadual'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO '; ?></button>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group col-sm-4">
-                                                            <label for="inscricao_municipal">Inscrição Municipal <small>(Somente Numeros)</small></label>
-                                                            <div class="input-group">
-                                                                <input type="text"  name="inscricao_municipal" class="form-control input-lg" value="<?php echo $data['inscricao_municipal']; ?>" <?php echo ($data['inscricao_municipal'] == 'ISENTO') ? 'readonly' : ''; ?>>
-                                                                <div class="input-group-btn">
-                                                                    <button type="button" style="margin-top:-14px;height:46px;" class="btn btn-primary inscricao_municipal"><?php echo ($data['inscricao_municipal'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO '; ?></button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    </div>
+                                                    <!--                                                        <div class="form-group col-sm-4">
+                                                                                                                <label for="inscricao_municipal">Inscrição Municipal <small>(Somente Numeros)</small></label>
+                                                                                                                <div class="input-group">
+                                                                                                                    <input type="text"  name="inscricao_municipal" class="form-control input-lg" value="<?php echo $data['inscricao_municipal']; ?>" <?php echo ($data['inscricao_municipal'] == 'ISENTO') ? 'readonly' : ''; ?>>
+                                                                                                                    <div class="input-group-btn">
+                                                                                                                        <button type="button" style="margin-top:-14px;height:46px;" class="btn btn-primary inscricao_municipal"><?php echo ($data['inscricao_municipal'] == 'ISENTO') ? 'NÃO ISENTO' : 'ISENTO '; ?></button>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>-->
                                                 </div>
                                             </div>
                                             <?php

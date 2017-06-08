@@ -46,7 +46,8 @@ try {
         $dados = amostrasDAO::getListaAmostrasHtml($paginador->getPage(), $user_id);
     }
 } catch (Exception $err) {
-    $response['error'][] = $err->getMessage();
+    //$response['error'][] = $err->getMessage();
+    die($err->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -161,8 +162,8 @@ try {
                             1-800- 624-5462
                         </div>
                     </div>
-                    
-                     <?php include_once './assets/include/dropdownLogin.php'; ?>
+
+                    <?php include_once './assets/include/dropdownLogin.php'; ?>
                 </div>
             </div>
         </header><!--b-topBar-->

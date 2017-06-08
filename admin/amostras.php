@@ -277,6 +277,7 @@ if (FUNCOES::isAjax()) {
                             <th>#</th>
                             <th>Lote</th>
                             <th>Região</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -294,13 +295,16 @@ if (FUNCOES::isAjax()) {
                                     $btnStatus = 'success AjaxConfirm';
                                 }
                                 ?>
-                                <tr <?php echo $dado['bloqueado'] ? 'class="danger"' : '' ?> >
+                        <tr <?php echo $dado['bloqueado'] || (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))) ? 'class="danger"' : '' ?> >
                                     <td class="" width='7px'> 
                                         <input name="selecao" value="<?php echo $dado['amostra_id']; ?>" type="checkbox">
                                         <input name="page" type="hidden"  value="<?= $dataGet['page']; ?>">
                                     </td>
                                     <td style="width:80px;"><?= $dado['n_lote']; ?></td>
                                     <td style="width:80px;"><span class="label label-default"><?= $dado['regiao']; ?></span></td>
+                                    <?php if (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))){ ?>
+                                    <td style="width:80px;"><span class="label label-danger"><?= 'Expirado' ?></span></td>
+                                    <?php } ?>
                                     <td style="width:65px;" class="text-right">
 
                                         <a class="btn btn-default btn-xs" data-toggle="tooltip" title="Editar" 

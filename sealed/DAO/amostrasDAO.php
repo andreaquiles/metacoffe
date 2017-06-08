@@ -69,7 +69,7 @@ class amostrasDAO {
 
     public static function getListaAmostras($limit) {
         try {
-            $sql = " SELECT a.amostra_id,a.n_lote,a.regiao,o.oferta_id,v.venda_id "
+            $sql = " SELECT a.amostra_id,a.n_lote,a.regiao,a.data_expiracao,o.oferta_id,v.venda_id "
                     . " FROM amostras a LEFT JOIN ofertas o ON a.amostra_id = o.amostra_id "
                     . " LEFT JOIN vendas v ON v.amostra_id = a.amostra_id"
                     . " WHERE a.usuario_id=" . $_SESSION['admin']
