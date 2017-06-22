@@ -6,7 +6,7 @@ usuariosBO::checkLogin();
 $filterGET = array(
     'action' => array(
         'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array("regexp" => "/^(excluir|imprimir|not_vendedor|vendedor)$/")
+        'options' => array("regexp" => "/^(excluir|imprimir|not_vendedor|vendedor|bloquear)$/")
     ),
     'page' => array(
         'filter' => FILTER_VALIDATE_INT
@@ -65,11 +65,11 @@ try {
     if (!$dataGet['page']) {
         $dataGet['page'] = 1;
     }
-    
+
     if (($dataGet['busca'])) {
         $count = pessoasBO::getPesquisaPessoasCount($dataGet);
         $paginador = new paginador($dataGet['page'], $count, 20, '', $arrayBusca);
-        $dados = pessoasBO::getPesquisaPessoas($dataGet,$paginador->getPage());
+        $dados = pessoasBO::getPesquisaPessoas($dataGet, $paginador->getPage());
     } else {
         $count = pessoasBO::getListaPessoasCount();
         $paginador = new paginador($dataGet['page'], $count, 20, '');
@@ -78,48 +78,45 @@ try {
     /**
      * action via post EXCLUIR
      */
-//    if (isset($dataGet['action'])) {
-//        if ($dataGet['action'] == 'excluir') {
-//            if (isset($dataGet['fornecedor_id'])) {
-//                try {
-//                    $result = fornecedoresBO::deletar($dataGet['fornecedor_id']);
-//                    if ($result == true) {
-//                        $response['success'][] = 'Fornecedor excluído com sucesso!';
-//                        $response['link'] = 'fornecedor?page=' . $dataGet['page'];
-//                    }else{
-//                        $response['error'][] = "Fornecedor já está vinculado a uma cotação !!";
-//                    }
-//                } catch (Exception $err) {
-//                    $response['error'][] = $err->getMessage();
-//                }
-//            }
-//        }
-//    }
-
     if (isset($dataGet['action'])) {
-        if ($dataGet['action'] == 'not_vendedor') {
-            try {
-                $data = array();
-                $data['vender'] = NULL;
-                pessoasBO::salvar($data, 'pessoas', $dataGet['pessoa_id']);
-                $response['success'][] = 'Alteração realizada com sucesso!';
-                $response['link'] = $_SERVER['PHP_SELF'] . '?'.  http_build_query($dataGetBusca);
-            } catch (Exception $err) {
-                $response['error'][] = $err->getMessage();
-            }
-        }
-        if ($dataGet['action'] == 'vendedor') {
-            try {
-                $data = array();
-                $data['vender'] = 1;
-                pessoasBO::salvar($data, 'pessoas', $dataGet['pessoa_id']);
-                $response['success'][] = 'Alteração realizada com sucesso!';
-                $response['link'] = $_SERVER['PHP_SELF'] . '?'.  http_build_query($dataGetBusca);
-            } catch (Exception $err) {
-                $response['error'][] = $err->getMessage();
+        if ($dataGet['action'] == 'bloquear') {
+            if (isset($dataGet['pessoa_id'])) {
+                try {
+                    $data['bloqueado'] = 1;
+                    pessoasBO::salvar($data, 'pessoas', $dataGet['pessoa_id']);
+                    $response['success'][] = 'Cliente Bloqueado com sucesso!';
+                    $response['link'] = $_SERVER['PHP_SELF'] . '?' . http_build_query($dataGetBusca);
+                } catch (Exception $err) {
+                    $response['error'][] = $err->getMessage();
+                }
             }
         }
     }
+
+//    if (isset($dataGet['action'])) {
+//        if ($dataGet['action'] == 'not_vendedor') {
+//            try {
+//                $data = array();
+//                $data['vender'] = NULL;
+//                pessoasBO::salvar($data, 'pessoas', $dataGet['pessoa_id']);
+//                $response['success'][] = 'Alteração realizada com sucesso!';
+//                $response['link'] = $_SERVER['PHP_SELF'] . '?'.  http_build_query($dataGetBusca);
+//            } catch (Exception $err) {
+//                $response['error'][] = $err->getMessage();
+//            }
+//        }
+//        if ($dataGet['action'] == 'vendedor') {
+//            try {
+//                $data = array();
+//                $data['vender'] = 1;
+//                pessoasBO::salvar($data, 'pessoas', $dataGet['pessoa_id']);
+//                $response['success'][] = 'Alteração realizada com sucesso!';
+//                $response['link'] = $_SERVER['PHP_SELF'] . '?'.  http_build_query($dataGetBusca);
+//            } catch (Exception $err) {
+//                $response['error'][] = $err->getMessage();
+//            }
+//        }
+//    }
 
     if (!$dataGet['page']) {
         $dataGet['page'] = 1;
@@ -168,7 +165,7 @@ if (FUNCOES::isAjax()) {
                 if (!empty($response['error'])) {
                     ?>
                     <div class="alert alert-danger fade in" role="alert">
-                    <?php echo implode('<br>', $response['error']); ?>
+                        <?php echo implode('<br>', $response['error']); ?>
                     </div>
                     <?php
                 }
@@ -193,7 +190,7 @@ if (FUNCOES::isAjax()) {
 
 
         <div class="container-fluid">
-            
+
             <div id="paginador_info_clientes">
                 <?php echo $paginador->getInfo(); ?>
             </div>
@@ -252,22 +249,22 @@ if (FUNCOES::isAjax()) {
                         $cont = 1;
                         if ($dados) {
                             foreach ($dados as $dado) {
-                                if ($dado['vender']) {
-                                    $action = 'not_vendedor';
-                                    $title = 'retirar vendedor';
-                                    $btnStatus = 'danger AjaxConfirm';
-                                } else {
-                                    $action = 'vendedor';
-                                    $title = 'ativar vendedor';
-                                    $btnStatus = 'success AjaxConfirm';
-                                }
+//                                if ($dado['vender']) {
+//                                    $action = 'not_vendedor';
+//                                    $title = 'retirar vendedor';
+//                                    $btnStatus = 'danger AjaxConfirm';
+//                                } else {
+//                                    $action = 'vendedor';
+//                                    $title = 'ativar vendedor';
+//                                    $btnStatus = 'success AjaxConfirm';
+//                                }
                                 ?>
                                 <tr <?php echo $dado['bloqueado'] ? 'class="danger"' : '' ?> >
                                     <td class="" width='7px'> 
                                         <input name="selecao" value="<?php echo $dado['pessoa_id']; ?>" type="checkbox">
                                         <input name="page" type="hidden"  value="<?= $dataGet['page']; ?>">
                                     </td>
-                                    <td style="width:150px;"><?= $dado['nome']; echo $dado['vender'] ? ' <span class="label label-success">vendedor</span>' : '';?></td>
+                                    <td style="width:150px;"><?= $dado['nome']; ?></td>
                                     <td style="width:100px;"><span class="label label-default"><?= $dado['email']; ?></span></td>
                                     <td style="width:65px;" class="text-right">
 
@@ -275,14 +272,16 @@ if (FUNCOES::isAjax()) {
                                            href="pessoa_editar?pessoa_id=<?= $dado['pessoa_id']; ?>&page=<?= $dataGet['page']; ?>">
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                         </a>
-                                        <a class="btn btn-default btn-xs alert-<?= $btnStatus ?>" data-toggle="tooltip" title="<?= $title; ?>" 
-                                           href="<?php $_SERVER['PHP_SELF']; ?>?pessoa_id=<?= $dado['pessoa_id']; ?>&action=<?= $action; ?>&page=<?= $dataGet['page'].'&'.  http_build_query($arrayBusca) ?>">
+        <!--                                        <a class="btn btn-default btn-xs alert-<?= $btnStatus ?>" data-toggle="tooltip" title="<?= $title; ?>" 
+                                           href="<?php $_SERVER['PHP_SELF']; ?>?pessoa_id=<?= $dado['pessoa_id']; ?>&action=<?= $action; ?>&page=<?= $dataGet['page'] . '&' . http_build_query($arrayBusca) ?>">
                                             <span class="glyphicon glyphicon glyphicon-user" aria-hidden="true"></span>
-                                        </a>
-                                        <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Excluir" 
-                                           href="clientes?action=excluir&pessoa_id=<?= $dado['pessoa_id']; ?>&page=<?= $dataGet['page']; ?>">
-                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                        </a>
+                                        </a>-->
+                                        <?php if (empty($dado['bloqueado'])) { ?>
+                                            <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Bloquear" 
+                                               href="pessoas.php?action=bloquear&pessoa_id=<?= $dado['pessoa_id']; ?>&page=<?= $dataGet['page']; ?>">
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                            </a>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                                 <?php

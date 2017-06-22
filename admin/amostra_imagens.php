@@ -119,10 +119,10 @@ if (FUNCOES::isAjax()) {
                                         <div></div>
                                     </div>
                                     <!-- Picedit navigation -->
-                                    <div class="picedit_nav_box picedit_gray_gradient">
+<!--                                    <div class="picedit_nav_box picedit_gray_gradient">
                                         <div class="picedit_pos_elements"></div>
                                         <div class="picedit_nav_elements">
-                                            <!-- Picedit button element begin -->
+                                             Picedit button element begin 
                                             <div class="picedit_element">
                                                 <span class="picedit_control picedit_action ico-picedit-pencil" title="Pen Tool"></span>
                                                 <div class="picedit_control_menu">
@@ -143,13 +143,13 @@ if (FUNCOES::isAjax()) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Picedit button element end -->
-                                            <!-- Picedit button element begin -->
+                                             Picedit button element end 
+                                             Picedit button element begin 
                                             <div class="picedit_element">
                                                 <span class="picedit_control picedit_action ico-picedit-insertpicture" title="Crop" data-action="crop_open"></span>
                                             </div>
-                                            <!-- Picedit button element end -->
-                                            <!-- Picedit button element begin -->
+                                             Picedit button element end 
+                                             Picedit button element begin 
                                             <div class="picedit_element">
                                                 <span class="picedit_control picedit_action ico-picedit-redo" title="Rotate"></span>
                                                 <div class="picedit_control_menu">
@@ -165,8 +165,8 @@ if (FUNCOES::isAjax()) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Picedit button element end -->
-                                            <!-- Picedit button element begin -->
+                                             Picedit button element end 
+                                             Picedit button element begin 
                                             <div class="picedit_element">
                                                 <span class="picedit_control picedit_action ico-picedit-arrow-maximise" title="Resize"></span>
                                                 <div class="picedit_control_menu">
@@ -189,9 +189,9 @@ if (FUNCOES::isAjax()) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Picedit button element end -->
+                                             Picedit button element end 
                                         </div>
-                                    </div>
+                                    </div>-->
                                     <!-- Picedit canvas element -->
                                     <div class="picedit_canvas_box" >
                                         <div class="picedit_painter">

@@ -285,17 +285,17 @@ if (FUNCOES::isAjax()) {
                         $cont = 1;
                         if ($dados) {
                             foreach ($dados as $dado) {
-                                if ($dado['vender']) {
-                                    $action = 'not_vendedor';
-                                    $title = 'retirar vendedor';
-                                    $btnStatus = 'danger AjaxConfirm';
-                                } else {
-                                    $action = 'vendedor';
-                                    $title = 'ativar vendedor';
-                                    $btnStatus = 'success AjaxConfirm';
-                                }
+//                                if ($dado['vender']) {
+//                                    $action = 'not_vendedor';
+//                                    $title = 'retirar vendedor';
+//                                    $btnStatus = 'danger AjaxConfirm';
+//                                } else {
+//                                    $action = 'vendedor';
+//                                    $title = 'ativar vendedor';
+//                                    $btnStatus = 'success AjaxConfirm';
+//                                }
                                 ?>
-                        <tr <?php echo $dado['bloqueado'] || (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))) ? 'class="danger"' : '' ?> >
+                        <tr <?php echo (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))) ? 'class="danger"' : '' ?> >
                                     <td class="" width='7px'> 
                                         <input name="selecao" value="<?php echo $dado['amostra_id']; ?>" type="checkbox">
                                         <input name="page" type="hidden"  value="<?= $dataGet['page']; ?>">
@@ -303,7 +303,10 @@ if (FUNCOES::isAjax()) {
                                     <td style="width:80px;"><?= $dado['n_lote']; ?></td>
                                     <td style="width:80px;"><span class="label label-default"><?= $dado['regiao']; ?></span></td>
                                     <?php if (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))){ ?>
-                                    <td style="width:80px;"><span class="label label-danger"><?= 'Expirado' ?></span></td>
+                                      <td style="width:50px;"><span class="label label-danger"><?= 'Expirado' ?></span></td>
+                                    <?php } ?>
+                                    <?php if ($dado['venda_id']){ ?>
+                                      <td style="width:50px;"><span class="label label-success"><?= 'Vendido' ?></span></td>
                                     <?php } ?>
                                     <td style="width:65px;" class="text-right">
 
@@ -321,9 +324,9 @@ if (FUNCOES::isAjax()) {
                                                 <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
                                             </a>
                                         <?php } ?>
-                                        <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Excluir" 
+                                        <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Desativar" 
                                            href="clientes?action=excluir&amostra_id=<?= $dado['amostra_id']; ?>&page=<?= $dataGet['page']; ?>">
-                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                         </a>
                                     </td>
                                 </tr>

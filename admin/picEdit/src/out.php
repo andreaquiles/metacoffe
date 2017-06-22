@@ -18,7 +18,7 @@ try {
     $desired_width = 125;
     foreach ($_FILES as $file) {
         $imgData = base64_encode(file_get_contents($file['tmp_name']));
-        if ($file["size"] <= 2048000) { // 2MB
+        if ($file["size"] <= 3072000) { // 3MB
             list($width, $height) = getimagesize($file['tmp_name']);
             $mimitype = $file["type"];
             $size = '(' . $width . ' x ' . $height . ' pixels)';
@@ -43,7 +43,7 @@ try {
                 echo '{"status":"1","link":"amostra_imagens?amostra_id='.$dataPost['amostra_id'].'"}';
             }
         } else {
-            echo '{"status":"0","msg":"Limite da imagem é de {2 MB}"}';
+            echo '{"status":"0","msg":"Limite da imagem é de {3 MB}"}';
         }
     }
 } catch (Exception $err) {

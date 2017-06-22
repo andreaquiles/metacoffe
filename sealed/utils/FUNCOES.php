@@ -207,9 +207,9 @@ class FUNCOES {
         $mensagem .= $msg . "\r\n";
         $mensagem .= "--$boundary \n";
         if ($dataPost['anexo']) {
-            $mensagem .= "Content-Type: ".$dataPost["type"]."; name=".$dataPost['nome_anexo']."\r\n";
+            $mensagem .= "Content-Type: " . $dataPost["type"] . "; name=" . $dataPost['nome_anexo'] . "\r\n";
             $mensagem .= "Content-Transfer-Encoding: base64 \n";
-            $mensagem .= "Content-Disposition: attachment; filename=".$dataPost['nome_anexo']." \r\n";
+            $mensagem .= "Content-Disposition: attachment; filename=" . $dataPost['nome_anexo'] . " \r\n";
             $mensagem .= "$anexo \n";
         }
         $mensagem .= "--$boundary \n";
@@ -256,6 +256,28 @@ class FUNCOES {
         } else {
             return $desired_height;
         }
+    }
+
+    function metac_logMsg($msg, $level = 'info', $file = 'main.log') {
+        switch ($level) {
+            case 'info':
+                $msg = '[ INFO ] ' . $msg;
+                break;
+
+            case 'warning':
+                $msg = '[ WARNING ] ' . $msg;
+                break;
+
+            case 'error':
+                $msg = '[ ERROR ] ' . $msg;
+                break;
+        }
+        // data atual
+        $date = date('Y-m-d H:i:s');
+        $msg = '[' . $date . '] ' . $msg;
+        // adiciona quebra de linha
+        $msg .= PHP_EOL;
+        file_put_contents($file, $msg, FILE_APPEND);
     }
 
 }

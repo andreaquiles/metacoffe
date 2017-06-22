@@ -314,6 +314,7 @@ try {
                     unset($data['pessoa_id']);
                     unset($datauser['pessoa_id']);
                     $datauser['comprar'] = 1;
+                    $datauser['vender'] = 1;
                     $datauser['usuario_id'] = $_SESSION['admin'];
                     $pessoa_id = pessoasBO::salvar($datauser, 'pessoas');
                     $data['pessoa_id'] = $pessoa_id;
@@ -611,14 +612,6 @@ if (FUNCOES::isAjax()) {
                                 <div class="checkbox pull-left">
                                     <label>
                                         <input type="checkbox" value="1"  name="bloqueado" <?= $data['bloqueado'] ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-danger">Bloqueado</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="margin-top:1.2em;">
-                                <div class="checkbox pull-left">
-                                    <label style="margin-left:1.2em;">
-                                        <input type="checkbox" value="1"  name="vender" <?= $data['vender'] ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-success">Vendedor</span>
                                     </label>
                                 </div>
                             </div>
