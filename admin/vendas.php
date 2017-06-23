@@ -58,22 +58,22 @@ try {
     }
 
     if ($inputPOST) {
-        $inputPOST['usuario_id'] = $_SESSION['admin'];
-        vendasDAO::salvar($inputPOST, 'vendas');
-        $data = array();
-        $data['situacao'] = 'vendida';
-        statusDAO::salvar($data, 'status',  $inputPOST['amostra_id']);
-        $response['success'][] = 'Oferta confirmada com sucesso!!';
-        $response['link'] = $_SERVER['PHP_SELF'];
+//        $inputPOST['usuario_id'] = $_SESSION['admin'];
+//        vendasDAO::salvar($inputPOST, 'vendas');
+//        $data = array();
+//        $data['situacao'] = 'vendida';
+//        statusDAO::salvar($data, 'status',  $inputPOST['amostra_id']);
+//        $response['success'][] = 'Oferta confirmada com sucesso!!';
+//        $response['link'] = $_SERVER['PHP_SELF'];
     } else {
         if (empty($dataGetBusca['amostra_id'])) {
-            $count = ofertasDAO::getListaOfertasCount();
+            $count = vendasDAO::getListaVendasCount();
             $paginador = new paginador($dataGet['page'], $count, 20, '');
-            $dados = ofertasDAO::getListaOfertas($paginador->getPage());
+            $dados = vendasDAO::getListaVendas($paginador->getPage());
         } else {
-            $count = ofertasDAO::getListaOfertasCountAmostraID($dataGetBusca['amostra_id']);
-            $paginador = new paginador($dataGet['page'], $count, 20, '');
-            $dados = ofertasDAO::getListaOfertasAmostra($paginador->getPage(), $dataGetBusca['amostra_id']);
+//            $count = ofertasDAO::getListaOfertasCountAmostraID($dataGetBusca['amostra_id']);
+//            $paginador = new paginador($dataGet['page'], $count, 20, '');
+//            $dados = ofertasDAO::getListaOfertasAmostra($paginador->getPage(), $dataGetBusca['amostra_id']);
         }
     }
     /**
@@ -227,9 +227,9 @@ if (FUNCOES::isAjax()) {
             </div>
             <ol class="breadcrumb">
                 <li><a href="<?= HOME ?>">Home</a></li>
-                <li class="active"><?= OFERTAS ?> </li>
+                <li class="active"><?= VENDAS ?> </li>
             </ol>
-            <ol class="breadcrumb" >
+            <ol class="breadcrumb">
 <!--                <a  href="pessoa_editar.php" role="button" class="btn btn-primary"> <span class="glyphicon glyphicon-plus-sign"></span>
                     <b>Novo Cliente</b>
                 </a>-->
@@ -267,7 +267,7 @@ if (FUNCOES::isAjax()) {
                             <th>#</th>
                             <th>Lote</th>
                             <th>Status</th>
-                            <th>Oferta</th>
+                            <th>Valor</th>
                             <th>Comprador</th>
                             <th>Data</th>
                         </tr>
@@ -289,25 +289,10 @@ if (FUNCOES::isAjax()) {
                                         <input name="page" type="hidden"  value="<?= $dataGet['page']; ?>">
                                     </td>
                                     <td style="width:30px;"><?= $dado['n_lote']; ?></td>
-                                    <td style="width:30px;"><span class="label label-warning"><?= $dado['situacao']; ?></span></td>
-                                    <td style="width:50px;"><?= 'R$ ' . FUNCOES::formatoDecimalHTML($dado['valor_oferta']); ?></td>
-                                    <td style="width:150px;"><span class=""><?= $nome; ?></span></td>
-                                    <td style="width:80px;"><span class=""><?= $dado['data'] ?></span></td>
-                                    <td style="width:65px;" class="text-right">
-
-                                        <a type="button" onclick="EditarOferta('<?= $dado['oferta_id'] ?>', 'load_oferta', 'formoferta')" 
-                                           class="btn btn-default btn-xs" title="Editar" 
-                                           data-target=".bd-example-modal-lg"
-                                           href="#modalsession" data-toggle="modal" > 
-                                            <i class="glyphicon glyphicon-edit"></i>
-                                        </a>
-
-                                        <!--                                        <a class="btn btn-default btn-xs" data-toggle="tooltip" title="Editar" 
-                                                                                   href="pessoa_editar?pessoa_id=<?= $dado['pessoa_id']; ?>&page=<?= $dataGet['page']; ?>">
-                                                                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                                                                </a>-->
-
-                                        
+                                    <td style="width:30px;"><span class="label label-success"><?= $dado['situacao']; ?></span></td>
+                                    <td style="width:50px;"><?= 'R$ ' . FUNCOES::formatoDecimalHTML($dado['valor']); ?></td>
+                                    <td style="width:150px;"><?= $nome; ?></span></td>
+                                    <td style="width:100px;"><?= ($dado['data']) ?></span></td>
                                 </tr>
                                 <?php
                                 $cont++;
@@ -331,25 +316,5 @@ if (FUNCOES::isAjax()) {
             </div>
         </div>
         <script src="../assets/js/gerenciador.min.js"></script>
-        <script>
-            $('input[name=email]').hide();
-            $('select[name=busca]').change(function () {
-                if (this.value === 'email') {
-                    $('input[name=email]').show();
-                    $('input[name=nome]').hide();
-                    $('input[name=nome]').val("");
-                } else if (this.value === 'nome') {
-                    $('input[name=nome]').show();
-                    $('input[name=email]').hide();
-                    $('input[name=email]').val("");
-                } else {
-                    $('input[name=nome]').hide();
-                    $('input[name=nome]').val("");
-                    $('input[name=email]').hide();
-                    $('input[name=email]').val("");
-                }
-            });
-        </script>
-        <script src="assets/js/oferta.min.js"></script>
     </body>
 </html>

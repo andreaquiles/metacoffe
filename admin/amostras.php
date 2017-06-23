@@ -217,7 +217,7 @@ if (FUNCOES::isAjax()) {
                     <b>Nova Amostra</b>
                 </a>
                 <a class="btn btn-default excluir" >
-                    <span class="glyphicon glyphicon-trash excluir" aria-hidden="true"></span> Excluir
+                    <span class="glyphicon glyphicon-remove-circle excluir" aria-hidden="true"></span> Remover
                 </a>
                 <a class="btn btn-danger" data-toggle="tooltip" title="PDF" 
                    href="index.php?action=usuarios&<?= http_build_query($dataGet) ?>" target="_blank">
@@ -303,10 +303,10 @@ if (FUNCOES::isAjax()) {
                                     <td style="width:80px;"><?= $dado['n_lote']; ?></td>
                                     <td style="width:80px;"><span class="label label-default"><?= $dado['regiao']; ?></span></td>
                                     <?php if (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))){ ?>
-                                      <td style="width:50px;"><span class="label label-danger"><?= 'Expirado' ?></span></td>
+                                      <td style="width:50px;"><span class="label label-danger"><?= 'expirada' ?></span></td>
                                     <?php } ?>
                                     <?php if ($dado['venda_id']){ ?>
-                                      <td style="width:50px;"><span class="label label-success"><?= 'Vendido' ?></span></td>
+                                      <td style="width:50px;"><span class="label label-success"><?= 'vendida' ?></span></td>
                                     <?php } ?>
                                     <td style="width:65px;" class="text-right">
 
@@ -324,7 +324,7 @@ if (FUNCOES::isAjax()) {
                                                 <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
                                             </a>
                                         <?php } ?>
-                                        <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Desativar" 
+                                        <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Remover" 
                                            href="clientes?action=excluir&amostra_id=<?= $dado['amostra_id']; ?>&page=<?= $dataGet['page']; ?>">
                                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                         </a>

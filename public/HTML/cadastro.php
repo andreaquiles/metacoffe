@@ -266,10 +266,10 @@ try {
                     unset($data['pessoa_id']);
                     unset($datauser['pessoa_id']);
                     $datauser['comprar'] = 1;
-                    $datauser['usuario_id'] = $_SESSION['admin'];
+                    $datauser['usuario_id'] = USUARIO_ID;
                     $pessoa_id = pessoasBO::salvar($datauser, 'pessoas');
                     $data['pessoa_id'] = $pessoa_id;
-                    $data['usuario_id'] = $_SESSION['admin'];
+                    $data['usuario_id'] = USUARIO_ID;
                     pessoasBO::salvar($data, 'pessoas_informacao');
                     $dataLogin = array();
                     $dataLogin['email'] = $data['email'];

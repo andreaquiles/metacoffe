@@ -74,6 +74,7 @@ try {
                 $data['valor'] = FUNCOES::formatoDecimal($dataPost['valor']);
                 $data['amostra_id'] = $dataPost['amostra_id'];
                 $data['observacao'] = $dataPost['text2'];
+                $data['usuario_id'] = USUARIO_ID;
                 ofertasBO::salvar($data, 'ofertas');
                 
                 $dataStatus = array();

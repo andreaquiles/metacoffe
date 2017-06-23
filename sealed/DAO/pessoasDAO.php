@@ -240,5 +240,17 @@ class pessoasDAO {
             throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
         }
     }
+    
+    static function remover($ids,$usuario_id) {
+        try {
+            $SQL = "UPDATE pessoas SET bloqueado = 1"
+                    . " WHERE pessoa_id  IN(" . implode(', ', $ids) . ')'
+                    . " AND usuario_id = ".$usuario_id;
+            $db = new DB();
+            $db->query($SQL);
+        } catch (Exception $err) {
+            throw new Exception($SQL);
+        }
+    }
 
 }

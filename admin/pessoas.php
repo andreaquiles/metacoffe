@@ -84,7 +84,7 @@ try {
                 try {
                     $data['bloqueado'] = 1;
                     pessoasBO::salvar($data, 'pessoas', $dataGet['pessoa_id']);
-                    $response['success'][] = 'Cliente Bloqueado com sucesso!';
+                    $response['success'][] = 'Cliente Removido com sucesso!';
                     $response['link'] = $_SERVER['PHP_SELF'] . '?' . http_build_query($dataGetBusca);
                 } catch (Exception $err) {
                     $response['error'][] = $err->getMessage();
@@ -92,6 +92,22 @@ try {
             }
         }
     }
+    
+    /**
+     * action via post EXCLUIR
+     */
+//    if ($inputPOST['action'] == 'excluir') {
+//        if (isset($inputPOST['ids'])) {
+//            $params = is_array($inputGET) ? "?&" . http_build_query($inputGET) : '';
+//            try {
+//                pessoasDAO::remover($inputPOST['ids'] , $_SESSION['admin']);
+//                $response['success'][] = 'Registros excluídos com sucesso!';
+//                $response['link'] = $_SERVER['PHP_SELF']. $params;
+//            } catch (Exception $err) {
+//                $response['error'][] = $err->getMessage();
+//            }
+//        }
+//    }
 
 //    if (isset($dataGet['action'])) {
 //        if ($dataGet['action'] == 'not_vendedor') {
@@ -205,7 +221,7 @@ if (FUNCOES::isAjax()) {
                     <b>Novo Cliente</b>
                 </a>
                 <a class="btn btn-default excluir" >
-                    <span class="glyphicon glyphicon-trash excluir" aria-hidden="true"></span> Excluir
+                    <span class="glyphicon glyphicon-remove-circle excluir" aria-hidden="true"></span> Remover
                 </a>
                 <a class="btn btn-danger" data-toggle="tooltip" title="PDF" 
                    href="index.php?action=usuarios&<?= http_build_query($dataGet) ?>" target="_blank">
@@ -277,7 +293,7 @@ if (FUNCOES::isAjax()) {
                                             <span class="glyphicon glyphicon glyphicon-user" aria-hidden="true"></span>
                                         </a>-->
                                         <?php if (empty($dado['bloqueado'])) { ?>
-                                            <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Bloquear" 
+                                            <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Remover" 
                                                href="pessoas.php?action=bloquear&pessoa_id=<?= $dado['pessoa_id']; ?>&page=<?= $dataGet['page']; ?>">
                                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                             </a>

@@ -51,6 +51,7 @@
                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Financeiro <span class="caret"></span></a>
                    <ul class="dropdown-menu">
                        <li><a href="ofertas">Ofertas</a></li>
+                       <li><a href="vendas">Vendas</a></li>
                    </ul>
                 </li>
             </ul>

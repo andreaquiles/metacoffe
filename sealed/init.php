@@ -23,6 +23,7 @@ define('HOME', "index");
 define('TITLE', "Manager MetaCoffee");
 define('PESSOAS', "Clientes");
 define('OFERTAS', "Ofertas");
+define('VENDAS', "Vendas");
 define('AMOSTRAS', "Amostras");
 define('AMOSTRAS_IMAGENS', "Amostras Imagens");
 define('DS', DIRECTORY_SEPARATOR);
@@ -34,6 +35,7 @@ define('PATH_SEALED_BANCO', PATH_SEALED.DS."banco");
 define('PATH_SEALED_CONTROLER', PATH_SEALED.DS."controler");
 define('PATH_SEALED_UTILS', PATH_SEALED.DS."utils");
 define('MSG_CLIQUE_LINK', "Clique no link ao lado");
+define('USUARIO_ID', 1);
 
 /* =============================
    Constantes do Mysql

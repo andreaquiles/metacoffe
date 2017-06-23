@@ -611,7 +611,7 @@ if (FUNCOES::isAjax()) {
                             <div class="form-group" style="margin-top:1.2em;">
                                 <div class="checkbox pull-left">
                                     <label>
-                                        <input type="checkbox" value="1"  name="bloqueado" <?= $data['bloqueado'] ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-danger">Bloqueado</span>
+                                        <input type="checkbox" value="1"  name="bloqueado" <?= $data['bloqueado'] ? " checked" : "" ?>><span style="font-size: 14px;" class="label label-danger">Removido</span>
                                     </label>
                                 </div>
                             </div>

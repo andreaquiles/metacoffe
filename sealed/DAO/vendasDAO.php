@@ -26,8 +26,8 @@ class vendasDAO {
                 }
             }
             if (isset($dbk)) {
-                    $fields['venda_id'] = $dbk;
-                    $SQL = 'UPDATE ' . $table . ' SET ' . implode(', ', $tmp) . ' WHERE (venda_id=:venda_id)';
+                $fields['venda_id'] = $dbk;
+                $SQL = 'UPDATE ' . $table . ' SET ' . implode(', ', $tmp) . ' WHERE (venda_id=:venda_id)';
             } else {
                 $SQL = 'INSERT INTO ' . $table . ' SET ' . implode(', ', $tmp);
             }
@@ -39,5 +39,41 @@ class vendasDAO {
         }
     }
 
+    public static function getListaVendas($Limit) {
+        try {
+             $SQL = " SELECT a.n_lote,s.situacao,v.valor,DATE_FORMAT(v.data, '%d/%m/%Y')data,p.nome,p.razao_social "
+                    . " FROM amostras a INNER JOIN status s ON s.amostra_id = a.amostra_id "
+                    . " INNER JOIN ofertas o ON o.amostra_id = a.amostra_id "
+                    . " INNER JOIN vendas v ON a.amostra_id = v.amostra_id "
+                    . " INNER JOIN pessoas_informacao p ON p.pessoa_id = v.pessoa_id "
+                    . " WHERE v.usuario_id = ".$_SESSION['admin']
+                    . " GROUP BY v.venda_id"
+                    . " ORDER BY v.data DESC"
+                    . " LIMIT $Limit";
+            $db = new DB();
+            $sqlmy = $db->query($SQL);
+            $dados = $db->GetData($sqlmy);
+            return $dados;
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
+
+    static function getListaVendasCount() {
+        try {
+            $SQL = " SELECT v.venda_id "
+                    . " FROM amostras a INNER JOIN status s ON s.amostra_id = a.amostra_id "
+                    . " INNER JOIN ofertas o ON o.amostra_id = a.amostra_id "
+                    . " INNER JOIN vendas v ON a.amostra_id = v.amostra_id "
+                    . " INNER JOIN pessoas_informacao p ON p.pessoa_id = v.pessoa_id "
+                    . " WHERE v.usuario_id = ".$_SESSION['admin']
+                    . " GROUP BY v.venda_id";
+            $db = new DB();
+            $count = $db->RowCount($SQL);
+            return $count;
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
 
 }

@@ -69,7 +69,8 @@ class ofertasDAO {
 
     public static function getListaOfertas($Limit) {
         try {
-            $sql = " SELECT o.oferta_id,a.n_lote,s.situacao,o.valor valor_oferta,p.pessoa_id,p.nome,p.razao_social "
+            $sql = " SELECT o.oferta_id,a.n_lote,s.situacao,o.valor valor_oferta,p.pessoa_id,p.nome,"
+                    . " p.razao_social,DATE_FORMAT(o.data, '%d/%m/%Y')data "
                     . " FROM ofertas o  INNER JOIN status s "
                     . " INNER JOIN amostras A ON o.amostra_id = a.amostra_id "
                     . " INNER JOIN pessoas_informacao p ON p.pessoa_id = o.pessoa_id "
@@ -119,7 +120,8 @@ class ofertasDAO {
 
     public static function getListaOfertasAmostra($Limit, $amostra_id) {
         try {
-            $sql = " SELECT o.oferta_id,a.n_lote,s.situacao,o.valor valor_oferta,p.pessoa_id,p.nome,p.razao_social "
+            $sql = " SELECT o.oferta_id,a.n_lote,s.situacao,o.valor valor_oferta,p.pessoa_id,"
+                    . " p.nome,p.razao_social,DATE_FORMAT(o.data, '%d/%m/%Y')data "
                     . " FROM ofertas o  INNER JOIN status s "
                     . " INNER JOIN amostras A ON o.amostra_id = a.amostra_id "
                     . " INNER JOIN pessoas_informacao p ON p.pessoa_id = o.pessoa_id "
