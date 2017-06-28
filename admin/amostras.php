@@ -51,10 +51,10 @@ $argsPost = array(
     ),
     'ids' => array(
         'filter' => FILTER_VALIDATE_INT,
-        'flags' => FILTER_REQUIRE_ARRAY,
+        'flags' => FILTER_REQUIRE_ARRAY
     ),
     'page' => array(
-        'filter' => FILTER_VALIDATE_INT,
+        'filter' => FILTER_VALIDATE_INT
     )
 );
 
@@ -276,6 +276,7 @@ if (FUNCOES::isAjax()) {
                         <tr>
                             <th>#</th>
                             <th>Lote</th>
+                            <th>Proprietário</th>
                             <th>Região</th>
                             <th></th>
                         </tr>
@@ -295,20 +296,25 @@ if (FUNCOES::isAjax()) {
 //                                    $btnStatus = 'success AjaxConfirm';
 //                                }
                                 ?>
-                        <tr <?php echo (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))) ? 'class="danger"' : '' ?> >
+                                <tr <?php echo (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))) ? 'class="danger"' : '' ?> >
                                     <td class="" width='7px'> 
                                         <input name="selecao" value="<?php echo $dado['amostra_id']; ?>" type="checkbox">
                                         <input name="page" type="hidden"  value="<?= $dataGet['page']; ?>">
                                     </td>
-                                    <td style="width:80px;"><?= $dado['n_lote']; ?></td>
-                                    <td style="width:80px;"><span class="label label-default"><?= $dado['regiao']; ?></span></td>
-                                    <?php if (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))){ ?>
-                                      <td style="width:50px;"><span class="label label-danger"><?= 'expirada' ?></span></td>
+                                    <td style="width:50px;"><?= $dado['n_lote']; ?></td>
+                                    <?php if (empty($dado['nome'])) { ?>
+                                        <td style="width:50px;"><?= 'Administrador' ?></td>
+                                    <?php } else { ?>
+                                        <td style="width:50px;"><?= $dado['nome'] ?></td>
                                     <?php } ?>
-                                    <?php if ($dado['venda_id']){ ?>
-                                      <td style="width:50px;"><span class="label label-success"><?= 'vendida' ?></span></td>
+                                    <td style="width:50px;"><span class="label label-default"><?= $dado['regiao']; ?></span></td>
+                                    <?php if (strtotime($dado['data_expiracao']) < strtotime(date('d-m-Y'))) { ?>
+                                        <td style="width:50px;"><span class="label label-danger"><?= 'expirada' ?></span></td>
                                     <?php } ?>
-                                    <td style="width:65px;" class="text-right">
+                                    <?php if ($dado['venda_id']) { ?>
+                                        <td style="width:50px;"><span class="label label-success"><?= 'vendida' ?></span></td>
+                                    <?php } ?>
+                                    <td style="width:70px;" class="text-right">
 
                                         <a class="btn btn-default btn-xs" data-toggle="tooltip" title="Editar" 
                                            href="amostra_editar?amostra_id=<?= $dado['amostra_id']; ?>&page=<?= $dataGet['page']; ?>">
@@ -324,6 +330,8 @@ if (FUNCOES::isAjax()) {
                                                 <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
                                             </a>
                                         <?php } ?>
+
+
                                         <a class="btn btn-danger btn-xs AjaxConfirm" data-toggle="tooltip" title="Remover" 
                                            href="clientes?action=excluir&amostra_id=<?= $dado['amostra_id']; ?>&page=<?= $dataGet['page']; ?>">
                                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>

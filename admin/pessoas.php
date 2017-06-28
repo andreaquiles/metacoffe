@@ -15,13 +15,13 @@ $filterGET = array(
         'filter' => FILTER_VALIDATE_INT
     ),
     'busca' => array(
-        'filter' => FILTER_DEFAULT,
+        'filter' => FILTER_DEFAULT
     ),
     'nome' => array(
-        'filter' => FILTER_DEFAULT,
+        'filter' => FILTER_DEFAULT
     ),
     'email' => array(
-        'filter' => FILTER_DEFAULT,
+        'filter' => FILTER_DEFAULT
     )
 );
 
@@ -48,10 +48,10 @@ $argsPost = array(
     ),
     'ids' => array(
         'filter' => FILTER_VALIDATE_INT,
-        'flags' => FILTER_REQUIRE_ARRAY,
+        'flags' => FILTER_REQUIRE_ARRAY
     ),
     'page' => array(
-        'filter' => FILTER_VALIDATE_INT,
+        'filter' => FILTER_VALIDATE_INT
     )
 );
 
@@ -85,7 +85,7 @@ try {
                     $data['bloqueado'] = 1;
                     pessoasBO::salvar($data, 'pessoas', $dataGet['pessoa_id']);
                     $response['success'][] = 'Cliente Removido com sucesso!';
-                    $response['link'] = $_SERVER['PHP_SELF'] . '?' . http_build_query($dataGetBusca);
+                    $response['link'] = $_SERVER['PHP_SELF'] . '?' . http_build_query($dataGet);
                 } catch (Exception $err) {
                     $response['error'][] = $err->getMessage();
                 }
@@ -96,18 +96,18 @@ try {
     /**
      * action via post EXCLUIR
      */
-//    if ($inputPOST['action'] == 'excluir') {
-//        if (isset($inputPOST['ids'])) {
-//            $params = is_array($inputGET) ? "?&" . http_build_query($inputGET) : '';
-//            try {
-//                pessoasDAO::remover($inputPOST['ids'] , $_SESSION['admin']);
-//                $response['success'][] = 'Registros excluídos com sucesso!';
-//                $response['link'] = $_SERVER['PHP_SELF']. $params;
-//            } catch (Exception $err) {
-//                $response['error'][] = $err->getMessage();
-//            }
-//        }
-//    }
+    if ($inputPOST['action'] == 'excluir') {
+        if (isset($inputPOST['ids'])) {
+            $params = is_array($inputGET) ? "?&" . http_build_query($inputGET) : '';
+            try {
+                pessoasDAO::remover($inputPOST['ids'] , $_SESSION['admin']);
+                $response['success'][] = 'Registros removido com sucesso!';
+                $response['link'] = $_SERVER['PHP_SELF'].'?page='.$inputPOST['page'];
+            } catch (Exception $err) {
+                $response['error'][] = $err->getMessage();
+            }
+        }
+    }
 
 //    if (isset($dataGet['action'])) {
 //        if ($dataGet['action'] == 'not_vendedor') {
@@ -314,9 +314,6 @@ if (FUNCOES::isAjax()) {
                 ?>
             </div>
         </div>
-
-
-
         <div id="footer" class="navbar-default">
             <div class="container">
             </div>
@@ -338,8 +335,6 @@ if (FUNCOES::isAjax()) {
                     $('input[name=nome]').val("");
                     $('input[name=email]').hide();
                     $('input[name=email]').val("");
-
-
                 }
             });
         </script>

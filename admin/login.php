@@ -1,8 +1,6 @@
 <?php
 require_once dirname(__DIR__).DIRECTORY_SEPARATOR."autoload.php";
 define("DOWNLOAD_DIR", "./includes/files/");
-
-
 $filter = array(
     'email' => array(
         'filter' => FILTER_VALIDATE_REGEXP,
