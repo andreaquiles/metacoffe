@@ -22,7 +22,7 @@ class pessoasBO {
             $login = pessoasDAO::getLogin($data);
             if ($login) {
                 $_SESSION['pessoa_id'] = $login['pessoa_id'];
-                $_SESSION['login'] = $login['login'];
+                $_SESSION['login'] = $login['nome'];
                 $_SESSION["sessiontimeCliente"]  = time();
             } else {
                 throw new Exception("Login e senha incorretos");
@@ -53,7 +53,7 @@ class pessoasBO {
 
     public static function checkLogin() {
         try {
-            if (!isset($_SESSION['cliente_id'])) {
+            if (!isset($_SESSION['pessoa_id'])) { //pessoa_id
                 header("Location: login.php ");
             }
         } catch (Exception $err) {

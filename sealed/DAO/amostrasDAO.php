@@ -69,13 +69,14 @@ class amostrasDAO {
 
     public static function getListaAmostras($limit) {
         try {
-            $sql = " SELECT a.amostra_id,a.n_lote,a.regiao,a.data_expiracao,o.oferta_id,v.venda_id "
+            $sql = " SELECT a.amostra_id,a.pessoa_id,a.n_lote,a.regiao,a.data_expiracao,o.oferta_id,pi.nome,"
+                    . " v.venda_id "
                     . " FROM amostras a LEFT JOIN ofertas o ON a.amostra_id = o.amostra_id "
                     . " LEFT JOIN vendas v ON v.amostra_id = a.amostra_id"
+                    . " LEFT JOIN pessoas_informacao pi ON pi.pessoa_id = a.pessoa_id"
                     . " WHERE a.usuario_id=" . $_SESSION['admin']
                     . " GROUP BY a.amostra_id"
                     . " LIMIT $limit";
-            
             $db = new DB();
             $sqlmy = $db->query($sql);
             $dados = $db->GetData($sqlmy);
@@ -146,9 +147,10 @@ class amostrasDAO {
 
     static function getPesquisaAmostras($dataGet, $limit) {
         try {
-            $SQL = "SELECT a.*,o.oferta_id,v.venda_id "
+            $SQL = "SELECT a.*,o.oferta_id,v.venda_id,pi.nome "
                     . " FROM amostras a LEFT JOIN ofertas o ON a.amostra_id = o.amostra_id"
                     . " LEFT JOIN vendas v ON v.amostra_id = a.amostra_id"
+                    . " LEFT JOIN pessoas_informacao pi ON pi.pessoa_id = a.pessoa_id"
                     . " WHERE a.tipo ='" . $dataGet['tipo'] . "'"
                     . " AND a.bebida = '" . $dataGet['bebida'] . "'"
                     . " AND a.regiao= '" . $dataGet['regiao'] . "'"
@@ -292,5 +294,73 @@ class amostrasDAO {
             throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
         }
     }
+    
+    public static function getListaAmostrasPessoas($limit) {
+        try {
+            $sql = " SELECT a.amostra_id,a.n_lote,a.regiao,a.data_expiracao,o.oferta_id,v.venda_id,pi.nome "
+                    . " FROM amostras a LEFT JOIN ofertas o ON a.amostra_id = o.amostra_id "
+                    . " LEFT JOIN vendas v ON v.amostra_id = a.amostra_id"
+                    . " LEFT JOIN pessoas_informacao pi ON pi.pessoa_id = a.pessoa_id"
+                    . " WHERE a.pessoa_id=" . $_SESSION['pessoa_id']
+                    . " GROUP BY a.amostra_id"
+                    . " LIMIT $limit";
+            
+            $db = new DB();
+            $sqlmy = $db->query($sql);
+            $dados = $db->GetData($sqlmy);
+            return $dados;
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
 
+    static function getListaAmostrasPessoasCount() {
+        try {
+            $SQL = " SELECT amostra_id "
+                    . " FROM amostras "
+                    . " WHERE pessoa_id= " . $_SESSION['pessoa_id'];
+            $db = new DB();
+            $count = $db->RowCount($SQL);
+            return $count;
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
+    
+    static function getPesquisaAmostrasPessoasCount($dataGet) {
+        try {
+            $SQL = "SELECT amostra_id "
+                    . " FROM amostras"
+                    . " WHERE tipo ='" . $dataGet['tipo'] . "'"
+                    . " AND bebida = '" . $dataGet['bebida'] . "'"
+                    . " AND regiao= '" . $dataGet['regiao'] . "'"
+                    . " AND pessoa_id=" . $_SESSION['pessoa_id'];
+            $db = new DB();
+            $count = $db->RowCount($SQL);
+            return $count;
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
+
+    static function getPesquisaAmostrasPessoas($dataGet, $limit) {
+        try {
+            $SQL = "SELECT a.*,o.oferta_id,v.venda_id,pi.nome "
+                    . " FROM amostras a LEFT JOIN ofertas o ON a.amostra_id = o.amostra_id"
+                    . " LEFT JOIN vendas v ON v.amostra_id = a.amostra_id"
+                    . " LEFT JOIN pessoas_informacao pi ON pi.pessoa_id = a.pessoa_id"
+                    . " WHERE a.tipo ='" . $dataGet['tipo'] . "'"
+                    . " AND a.bebida = '" . $dataGet['bebida'] . "'"
+                    . " AND a.regiao= '" . $dataGet['regiao'] . "'"
+                    . " AND a.pessoa_id=" . $_SESSION['pessoa_id']
+                    . " GROUP BY a.amostra_id"
+                    . " LIMIT $limit";
+            $db = new DB();
+            return $db->GetData($db->query($SQL), true);
+            // return $db->executeReturnFetch($SQL, array($dataGet['tipo'], $dataGet['bebida'],$dataGet['regiao']), true);
+        } catch (Exception $err) {
+            throw new Exception($err->getMessage() . ': ' . __FUNCTION__);
+        }
+    }
+    
 }

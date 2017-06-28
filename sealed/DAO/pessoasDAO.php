@@ -123,7 +123,7 @@ class pessoasDAO {
         try {
             $SQL = "SELECT cpf,cnpj FROM pessoas_informacao  "
                     . " WHERE (cpf = ? OR cnpj= ?) "
-                    . " AND usuario_id=1";
+                    . " AND usuario_id=".USUARIO_ID;
             $db = new DB();
             return $db->executeReturnFetch($SQL, array($cpf_cnpj, $cpf_cnpj));
         } catch (Exception $err) {
@@ -148,7 +148,7 @@ class pessoasDAO {
         try {
             $SQL = "SELECT pessoa_id FROM pessoas "
                     . " WHERE login = ? "
-                    . " AND usuario_id=1";
+                    . " AND usuario_id=".USUARIO_ID;
             $db = new DB();
             return $db->executeReturnFetch($SQL, array($login));
         } catch (Exception $err) {
@@ -161,7 +161,7 @@ class pessoasDAO {
             $SQL = "SELECT * FROM pessoas "
                     . " WHERE login = ? "
                     . " AND pessoa_id <> ?"
-                    . " AND usuario_id=1";
+                    . " AND usuario_id=".USUARIO_ID;
             $db = new DB();
             return $db->executeReturnFetch($SQL, array($login, $pessoa_id));
         } catch (Exception $err) {
@@ -229,7 +229,7 @@ class pessoasDAO {
             $email = $data['email'];
             $senha = FUNCOES::cryptografar($data['senha']);
             
-            $sql = "SELECT p.pessoa_id,p.login"
+            $sql = "SELECT p.pessoa_id,p.login, pi.nome"
                     . " FROM pessoas p INNER JOIN pessoas_informacao pi ON p.pessoa_id = pi.pessoa_id"
                     . " WHERE pi.email='$email' "
                     . " AND p.password='$senha' ";

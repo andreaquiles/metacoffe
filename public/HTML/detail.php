@@ -89,7 +89,7 @@ try {
             exit();
         }
     }
-    $dados = amostrasDAO::getListaImagensHTML($dataGet['amostra_id'], 1);
+    $dados = amostrasDAO::getListaImagensHTML($dataGet['amostra_id'], USUARIO_ID);
 } catch (Exception $err) {
     $response['error'][] = $err->getMessage();
 }
@@ -285,6 +285,7 @@ try {
                             <?php if ($_SESSION['pessoa_id']) { ?>
                                 <a href="#ofertar" class="btn m-btn m-infoBtn">OFERTAR<span class="fa fa-angle-right"></span></a>
                                 <a href="#" class="btn m-btn m-infoBtn">COMPRAR AMOSTRA<span class="fa fa-angle-right"></span></a>
+                                <a href="../../cliente/index.php" class="btn m-btn m-infoBtn">PAINEL DE CONTROLE<span class="fa fa-angle-right"></span></a>
                             <?php } ?>
                         </div>
                     </div>

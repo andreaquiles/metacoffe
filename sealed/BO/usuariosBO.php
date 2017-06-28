@@ -40,7 +40,7 @@ class usuariosBO {
                 header("Location: logout.php");
             }
         } else {
-            header("Location: logout.php");
+            header("Location: login.php");
         }
     }
 

@@ -9,7 +9,7 @@ $filterGET = array(
         'filter' => FILTER_VALIDATE_INT
     )
 );
-$user_id = 1;
+$user_id = USUARIO_ID;
 $filterGETBusca = array(
     'page' => array(
         'filter' => FILTER_VALIDATE_INT

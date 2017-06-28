@@ -11,8 +11,15 @@ class PDF extends FPDF {
         
     }
 
-    function Header() {
-        
+    function Header($title) {
+        // Arial bold 15
+        $this->SetFont('Arial', 'B', 15);
+        // Move to the right
+        $this->Cell(80);
+        // Title
+        $this->Cell(30, 10, $title, 1, 0, 'C');
+        // Line break
+        $this->Ln(20);
     }
 
     //Page footer
@@ -39,7 +46,6 @@ class PDF extends FPDF {
         $this->Cell(90, 20, utf8_decode('Total R$'), 1, 0, 'L', 1);
     }
 
-    
     function HeaderLblsProdutosSemPreco($cotacao) {
         $this->SetFont('arial', 'B', 11);
         $this->SetFillColor(192, 192, 192);
@@ -59,7 +65,7 @@ switch ($relatorio) {
         $pdf->Ln();
         $cont = 1;
         $y = 1;
-        //$pdf->HeaderLblsCotacaoEncerrada('cotacao', 'nome');
+        $pdf->Header('Peça');
         $pdf->Ln();
         $pdf->SetFont('arial', '', 8);
 //        $pdf->Cell(35, 20, ($y), 1, 0, 'L');
@@ -68,7 +74,7 @@ switch ($relatorio) {
 //        $pdf->Cell(90, 20, 'FUNCOES', 1, 1, 'L');
 //        $cont++;
 //        $pdf->SetFont('arial', '', 11);
-        $pdf->Cell("", 20, "Soma total: R$ " , 1, 0, 'R', 1);
+        $pdf->Cell("", 20, "Soma total: R$ ", 1, 0, 'R', 1);
         //ob_clean();
         $pdf->Output('_relatorio' . ".pdf", "F");
         break;
